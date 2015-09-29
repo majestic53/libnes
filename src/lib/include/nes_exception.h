@@ -27,17 +27,12 @@ namespace NES {
 	#define EXCEPTION_HEADER "Exception"
 	#define EXCEPTION_UNKNOWN "Unknown exception"
 
-#ifndef NDEBUG
 	#define THROW_EXCEPTION(_HEADER_, _EXCEPT_) \
 		nes_exception::generate(_HEADER_, _EXCEPT_, __FUNCTION__, \
 		__FILE__, __LINE__, NULL)
 	#define THROW_EXCEPTION_MESSAGE(_HEADER_, _EXCEPT_, _FORMAT_, ...) \
 		nes_exception::generate(_HEADER_, _EXCEPT_, __FUNCTION__, \
 		__FILE__, __LINE__, _FORMAT_, __VA_ARGS__)
-#else
-	#define THROW_EXCEPTION(_HEADER_, _EXCEPT_)
-	#define THROW_EXCEPTION_MESSAGE(_HEADER_, _EXCEPT_, _FORMAT_, ...)
-#endif // NDEBUG
 
 	typedef class _nes_exception :
 			public std::runtime_error {
