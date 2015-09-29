@@ -25,7 +25,8 @@ namespace NES {
 	nes_ptr nes::m_instance = NULL;
 
 	_nes::_nes(void) :
-		m_initialized(false)
+		m_initialized(false),
+		m_instance_memory(nes_memory::acquire())
 	{
 		std::atexit(nes::_delete);
 	}
@@ -63,6 +64,13 @@ namespace NES {
 		return nes::m_instance;
 	}
 
+	nes_memory_ptr 
+	_nes::acquire_memory(void)
+	{
+		ATOMIC_CALL_RECUR(m_lock);
+		return m_instance_memory;
+	}
+
 	void 
 	_nes::initialize(void)
 	{
@@ -73,6 +81,7 @@ namespace NES {
 		}
 
 		m_initialized = true;
+		m_instance_memory->initialize();
 
 		// TODO: initialize components
 	}
@@ -92,6 +101,8 @@ namespace NES {
 
 	std::string 
 	_nes::to_string(
+		__in_opt uint16_t address,
+		__in_opt uint16_t offset,
 		__in_opt bool verbose
 		)
 	{
@@ -106,7 +117,8 @@ namespace NES {
 			result << ", ptr. 0x" << VALUE_AS_HEX(nes_ptr, this);
 		}
 
-		result << ")";
+		result << ")"
+			<< std::endl << m_instance_memory->to_string(address, offset, verbose);
 
 		// TODO: print components
 
@@ -121,6 +133,8 @@ namespace NES {
 		if(!m_initialized) {
 			THROW_NES_EXCEPTION(NES_EXCEPTION_UNINITIALIZED);
 		}
+
+		m_instance_memory->uninitialize();
 
 		// TODO: uninitialize components
 

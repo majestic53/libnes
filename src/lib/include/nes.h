@@ -31,6 +31,14 @@
 
 using namespace NES;
 
+#ifndef COMP
+#define COMP component
+#endif // COMP
+
+#include "nes_memory.h"
+
+using namespace NES::COMP;
+
 namespace NES {
 
 	typedef class _nes {
@@ -41,6 +49,8 @@ namespace NES {
 
 			static _nes *acquire(void);
 
+			nes_memory_ptr acquire_memory(void);
+
 			void initialize(void);
 
 			static bool is_allocated(void);
@@ -48,6 +58,8 @@ namespace NES {
 			bool is_initialized(void);
 
 			std::string to_string(
+				__in_opt uint16_t address = 0,
+				__in_opt uint16_t offset = 0,
 				__in_opt bool verbose = false
 				);
 
@@ -72,6 +84,8 @@ namespace NES {
 			bool m_initialized;
 
 			static _nes *m_instance;
+
+			nes_memory_ptr m_instance_memory;
 
 		private:
 

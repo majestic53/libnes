@@ -31,9 +31,9 @@ main(void)
 
 		inst = nes::acquire();
 		inst->initialize();
-		std::cout << inst->to_string(true) << std::endl;
+		std::cout << inst->to_string(0, 0, true) << std::endl;
 		inst->uninitialize();
-		std::cout << inst->to_string(true) << std::endl;
+		std::cout << inst->to_string(0, 0, true) << std::endl;
 
 		// TODO
 

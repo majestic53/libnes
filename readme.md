@@ -13,6 +13,10 @@ Changelog
 =========
 
 ##Version 0.1.1539
+*Updated:9/28/2015*
+
+* Added memory manager class
+
 *Updated:9/27/2015*
 
 * Initial commit
