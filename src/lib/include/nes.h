@@ -36,6 +36,7 @@ using namespace NES;
 #endif // COMP
 
 #include "nes_memory.h"
+#include "nes_cpu.h"
 
 using namespace NES::COMP;
 
@@ -48,6 +49,8 @@ namespace NES {
 			~_nes(void);
 
 			static _nes *acquire(void);
+
+			nes_cpu_ptr acquire_cpu(void);
 
 			nes_memory_ptr acquire_memory(void);
 
@@ -84,6 +87,8 @@ namespace NES {
 			bool m_initialized;
 
 			static _nes *m_instance;
+
+			nes_cpu_ptr m_instance_cpu;
 
 			nes_memory_ptr m_instance_memory;
 

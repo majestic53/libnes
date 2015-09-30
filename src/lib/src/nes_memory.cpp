@@ -98,7 +98,7 @@ namespace NES {
 				result << "0x" << VALUE_AS_HEX(uint16_t, address) << ": ";
 			}
 
-			result << "0x" << VALUE_AS_HEX(uint8_t, block.at(address)) << " [";
+			result << "0x" << VALUE_AS_HEX(uint8_t, block.at(address)) << " [0b";
 
 			while(iter--) {
 				result << ((value & 0x80) ? "1" : "0");
