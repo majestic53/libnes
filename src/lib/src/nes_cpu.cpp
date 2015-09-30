@@ -143,19 +143,22 @@ namespace NES {
 		void 
 		_nes_cpu::interrupt(
 			__in uint16_t address,
-			__in uint8_t status
+			__in_opt bool breakpoint
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
 			push_word(m_register_pc);
 			m_register_pc = address;
-			push(status);	
+
+			if(breakpoint) {
+				CPU_FLAG_SET(m_register_p, CPU_FLAG_BREAKPOINT);
+			}
+
+			push(m_register_p);	
 		}
 
 		void 
-		_nes_cpu::interrupt_return(
-			__in uint16_t address
-			)
+		_nes_cpu::interrupt_return(void)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
 			m_register_p = pop();
@@ -173,7 +176,7 @@ namespace NES {
 			}
 
 			if(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_INTERRUPT_ENABLED)) {
-				interrupt(CPU_INTERRUPT_IRQ_ADDRESS, m_register_p);
+				interrupt(CPU_INTERRUPT_IRQ_ADDRESS);
 			}
 		}
 
@@ -217,7 +220,7 @@ namespace NES {
 				THROW_NES_CPU_EXCEPTION(NES_CPU_EXCEPTION_UNINITIALIZED);
 			}
 
-			interrupt(CPU_INTERRUPT_NMI_ADDRESS, m_register_p);
+			interrupt(CPU_INTERRUPT_NMI_ADDRESS);
 		}
 
 		uint8_t 
@@ -282,8 +285,8 @@ namespace NES {
 			code = load(m_register_pc);
 			++m_register_pc;
 
-			// TODO: on brk instruction, set breakpoint flag to 1 (CPU_FLAG_SET(m_register_p, CPU_FLAG_BREAKPOINT))
-			// TODO: on rti instruction, set breakpoint flag to 0 (CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_BREAKPOINT))
+			// TODO: on brk instruction, call interrupt with breakpoint flag set to true
+			// TODO: on rti instruction, call interrupt_return
 		}
 
 		void 

@@ -72,12 +72,10 @@ namespace NES {
 
 				void interrupt(
 					__in uint16_t address,
-					__in uint8_t status
+					__in_opt bool breakpoint = false
 					);
 
-				void interrupt_return(
-					__in uint16_t address
-					);
+				void interrupt_return(void);
 
 				uint8_t load(
 					__in uint16_t address
