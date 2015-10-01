@@ -38,14 +38,16 @@ namespace NES {
 			NES_CPU_EXCEPTION_ALLOCATED = 0,
 			NES_CPU_EXCEPTION_INITIALIZED,
 			NES_CPU_EXCEPTION_UNINITIALIZED,
+			NES_CPU_EXCEPTION_UNSUPPORTED_CODE,
 		};
 
-		#define NES_CPU_EXCEPTION_MAX NES_CPU_EXCEPTION_UNINITIALIZED
+		#define NES_CPU_EXCEPTION_MAX NES_CPU_EXCEPTION_UNSUPPORTED_CODE
 
 		static const std::string NES_CPU_EXCEPTION_STR[] = {
 			"Failed to allocate cpu component",
 			"Cpu component is initialized",
 			"Cpu component is uninitialized",
+			"Unsupported opcode",
 			};
 
 		#define NES_CPU_EXCEPTION_STRING(_TYPE_) \

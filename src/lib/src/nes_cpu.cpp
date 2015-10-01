@@ -18,12 +18,12 @@
  */
 
 #include "../include/nes.h"
+#include "../include/nes_cpu_code.h"
 #include "../include/nes_cpu_type.h"
 
 namespace NES {
 
 	namespace COMP {
-
 
 		#define CPU_CYCLES_INIT 0
 		#define CPU_FLAG_BREAKPOINT 0x10
@@ -32,6 +32,7 @@ namespace NES {
 		#define CPU_FLAG_NEGATIVE 0x80
 		#define CPU_FLAG_OVERFLOW 0x40
 		#define CPU_FLAG_ZERO 0x2
+		#define CPU_INTERRUPT_CYCLES 3
 		#define CPU_INTERRUPT_IRQ_ADDRESS 0xfffe
 		#define CPU_INTERRUPT_NMI_ADDRESS 0xfffa
 		#define CPU_INTERRUPT_RESET_ADDRESS 0xfffc
@@ -128,6 +129,440 @@ namespace NES {
 		}
 
 		void 
+		_nes_cpu::execute_adc(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_and(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_asl(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_branch(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_bit(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_brk(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO: call interrupt with breakpoint flag set to true
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_flag(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_cmp(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_cpx(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_cpy(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_dec(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_eor(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_inc(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_jmp(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_jsr(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_lda(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_ldx(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_ldy(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_lsr(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_nop(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_ora(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_register(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_rol(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_ror(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_rti(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO: call interrupt_return
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_rts(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_sbc(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_sta(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_stack(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_stx(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
+		_nes_cpu::execute_sty(
+			__in uint8_t code
+			)
+		{
+			size_t cycles = 0;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			// TODO
+
+			m_cycles += cycles;
+		}
+
+		void 
 		_nes_cpu::initialize(void)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
@@ -154,7 +589,8 @@ namespace NES {
 				CPU_FLAG_SET(m_register_p, CPU_FLAG_BREAKPOINT);
 			}
 
-			push(m_register_p);	
+			push(m_register_p);
+			m_cycles += CPU_INTERRUPT_CYCLES;
 		}
 
 		void 
@@ -285,8 +721,224 @@ namespace NES {
 			code = load(m_register_pc);
 			++m_register_pc;
 
-			// TODO: on brk instruction, call interrupt with breakpoint flag set to true
-			// TODO: on rti instruction, call interrupt_return
+			switch(code) {
+				case CPU_CODE_ADC_ABSOLUTE:
+				case CPU_CODE_ADC_ABSOLUTE_X:
+				case CPU_CODE_ADC_ABSOLUTE_Y:
+				case CPU_CODE_ADC_IMMEDIATE:
+				case CPU_CODE_ADC_INDIRECT_X:
+				case CPU_CODE_ADC_INDIRECT_Y:
+				case CPU_CODE_ADC_ZERO_PAGE:
+				case CPU_CODE_ADC_ZERO_PAGE_X:
+					execute_adc(code);
+					break;
+				case CPU_CODE_AND_ABSOLUTE:
+				case CPU_CODE_AND_ABSOLUTE_X:
+				case CPU_CODE_AND_ABSOLUTE_Y:
+				case CPU_CODE_AND_IMMEDIATE:
+				case CPU_CODE_AND_INDIRECT_X:
+				case CPU_CODE_AND_INDIRECT_Y:
+				case CPU_CODE_AND_ZERO_PAGE:
+				case CPU_CODE_AND_ZERO_PAGE_X:
+					execute_and(code);
+					break;
+				case CPU_CODE_ASL_ABSOLUTE:
+				case CPU_CODE_ASL_ABSOLUTE_X:
+				case CPU_CODE_ASL_ACCUMULATOR:
+				case CPU_CODE_ASL_ZERO_PAGE:
+				case CPU_CODE_ASL_ZERO_PAGE_X:
+					execute_asl(code);
+					break;
+				case CPU_CODE_BCC_RELATIVE:
+				case CPU_CODE_BCS_RELATIVE:
+				case CPU_CODE_BEQ_RELATIVE:
+				case CPU_CODE_BMI_RELATIVE:
+				case CPU_CODE_BNE_RELATIVE:
+				case CPU_CODE_BPL_RELATIVE:
+				case CPU_CODE_BVC_RELATIVE:
+				case CPU_CODE_BVS_RELATIVE:
+					execute_branch(code);
+					break;
+				case CPU_CODE_BIT_ABSOLUTE:
+				case CPU_CODE_BIT_ZERO_PAGE:
+					execute_bit(code);
+					break;
+				case CPU_CODE_BRK_IMPLIED:
+					execute_brk(code);
+					break;
+				case CPU_CODE_CLC_IMPLIED:
+				case CPU_CODE_CLD_IMPLIED:
+				case CPU_CODE_CLI_IMPLIED:
+				case CPU_CODE_CLV_IMPLIED:
+				case CPU_CODE_SEC_IMPLIED:
+				case CPU_CODE_SED_IMPLIED:
+				case CPU_CODE_SEI_IMPLIED:
+					execute_flag(code);
+					break;
+				case CPU_CODE_CMP_ABSOLUTE:
+				case CPU_CODE_CMP_ABSOLUTE_X:
+				case CPU_CODE_CMP_ABSOLUTE_Y:
+				case CPU_CODE_CMP_IMMEDIATE:
+				case CPU_CODE_CMP_INDIRECT_X:
+				case CPU_CODE_CMP_INDIRECT_Y:
+				case CPU_CODE_CMP_ZERO_PAGE:
+				case CPU_CODE_CMP_ZERO_PAGE_X:
+					execute_cmp(code);
+					break;
+				case CPU_CODE_CPX_ABSOLUTE:
+				case CPU_CODE_CPX_IMMEDIATE:
+				case CPU_CODE_CPX_ZERO_PAGE:
+					execute_cpx(code);
+					break;
+				case CPU_CODE_CPY_ABSOLUTE:
+				case CPU_CODE_CPY_IMMEDIATE:
+				case CPU_CODE_CPY_ZERO_PAGE:
+					execute_cpy(code);
+					break;
+				case CPU_CODE_DEC_ABSOLUTE:
+				case CPU_CODE_DEC_ABSOLUTE_X:
+				case CPU_CODE_DEC_ZERO_PAGE:
+				case CPU_CODE_DEC_ZERO_PAGE_X:
+					execute_dec(code);
+					break;
+				case CPU_CODE_DEX_IMPLIED:
+				case CPU_CODE_DEY_IMPLIED:
+				case CPU_CODE_INX_IMPLIED:
+				case CPU_CODE_INY_IMPLIED:
+				case CPU_CODE_TAX_IMPLIED:
+				case CPU_CODE_TAY_IMPLIED:
+				case CPU_CODE_TXA_IMPLIED:
+				case CPU_CODE_TYA_IMPLIED:
+					execute_register(code);
+					break;
+				case CPU_CODE_EOR_ABSOLUTE:
+				case CPU_CODE_EOR_ABSOLUTE_X:
+				case CPU_CODE_EOR_ABSOLUTE_Y:
+				case CPU_CODE_EOR_IMMEDIATE:
+				case CPU_CODE_EOR_INDIRECT_X:
+				case CPU_CODE_EOR_INDIRECT_Y:
+				case CPU_CODE_EOR_ZERO_PAGE:
+				case CPU_CODE_EOR_ZERO_PAGE_X:
+					execute_eor(code);
+					break;
+				case CPU_CODE_INC_ABSOLUTE:
+				case CPU_CODE_INC_ABSOLUTE_X:
+				case CPU_CODE_INC_ZERO_PAGE:
+				case CPU_CODE_INC_ZERO_PAGE_X:
+					execute_inc(code);
+					break;
+				case CPU_CODE_JMP_ABSOLUTE:
+				case CPU_CODE_JMP_INDIRECT:
+					execute_jmp(code);
+					break;
+				case CPU_CODE_JSR_ABSOLUTE:
+					execute_jsr(code);
+					break;
+				case CPU_CODE_LDA_ABSOLUTE:
+				case CPU_CODE_LDA_ABSOLUTE_X:
+				case CPU_CODE_LDA_ABSOLUTE_Y:
+				case CPU_CODE_LDA_IMMEDIATE:
+				case CPU_CODE_LDA_INDIRECT_X:
+				case CPU_CODE_LDA_INDIRECT_Y:
+				case CPU_CODE_LDA_ZERO_PAGE:
+				case CPU_CODE_LDA_ZERO_PAGE_X:
+					execute_lda(code);
+					break;
+				case CPU_CODE_LDX_ABSOLUTE:
+				case CPU_CODE_LDX_ABSOLUTE_Y:
+				case CPU_CODE_LDX_IMMEDIATE:
+				case CPU_CODE_LDX_ZERO_PAGE:
+				case CPU_CODE_LDX_ZERO_PAGE_Y:
+					execute_ldx(code);
+					break;
+				case CPU_CODE_LDY_ABSOLUTE:
+				case CPU_CODE_LDY_ABSOLUTE_X:
+				case CPU_CODE_LDY_IMMEDIATE:
+				case CPU_CODE_LDY_ZERO_PAGE:
+				case CPU_CODE_LDY_ZERO_PAGE_X:
+					execute_ldy(code);
+					break;
+				case CPU_CODE_LSR_ABSOLUTE:
+				case CPU_CODE_LSR_ABSOLUTE_X:
+				case CPU_CODE_LSR_ACCUMULATOR:
+				case CPU_CODE_LSR_ZERO_PAGE:
+				case CPU_CODE_LSR_ZERO_PAGE_X:
+					execute_lsr(code);
+					break;
+				case CPU_CODE_NOP_IMPLIED:
+					++m_cycles;
+					break;
+				case CPU_CODE_ORA_ABSOLUTE:
+				case CPU_CODE_ORA_ABSOLUTE_X:
+				case CPU_CODE_ORA_ABSOLUTE_Y:
+				case CPU_CODE_ORA_IMMEDIATE:
+				case CPU_CODE_ORA_INDIRECT_X:
+				case CPU_CODE_ORA_INDIRECT_Y:
+				case CPU_CODE_ORA_ZERO_PAGE:
+				case CPU_CODE_ORA_ZERO_PAGE_X:
+					execute_ora(code);
+					break;
+				case CPU_CODE_PHA_IMPLIED:
+				case CPU_CODE_PHP_IMPLIED:
+				case CPU_CODE_PLA_IMPLIED:
+				case CPU_CODE_PLP_IMPLIED:
+				case CPU_CODE_TSX_IMPLIED:
+				case CPU_CODE_TXS_IMPLIED:
+					execute_stack(code);
+					break;
+				case CPU_CODE_ROL_ABSOLUTE:
+				case CPU_CODE_ROL_ABSOLUTE_X:
+				case CPU_CODE_ROL_ACCUMULATOR:
+				case CPU_CODE_ROL_ZERO_PAGE:
+				case CPU_CODE_ROL_ZERO_PAGE_X:
+					execute_rol(code);
+					break;
+				case CPU_CODE_ROR_ABSOLUTE:
+				case CPU_CODE_ROR_ABSOLUTE_X:
+				case CPU_CODE_ROR_ACCUMULATOR:
+				case CPU_CODE_ROR_ZERO_PAGE:
+				case CPU_CODE_ROR_ZERO_PAGE_X:
+					execute_ror(code);
+					break;
+				case CPU_CODE_RTI_IMPLIED:
+					execute_rti(code);
+					break;
+				case CPU_CODE_RTS_IMPLIED:
+					execute_rts(code);
+					break;
+				case CPU_CODE_SBC_ABSOLUTE:
+				case CPU_CODE_SBC_ABSOLUTE_X:
+				case CPU_CODE_SBC_ABSOLUTE_Y:
+				case CPU_CODE_SBC_IMMEDIATE:
+				case CPU_CODE_SBC_INDIRECT_X:
+				case CPU_CODE_SBC_INDIRECT_Y:
+				case CPU_CODE_SBC_ZERO_PAGE:
+				case CPU_CODE_SBC_ZERO_PAGE_X:
+					execute_sbc(code);
+					break;
+				case CPU_CODE_STA_ABSOLUTE:
+				case CPU_CODE_STA_ABSOLUTE_X:
+				case CPU_CODE_STA_ABSOLUTE_Y:
+				case CPU_CODE_STA_INDIRECT_X:
+				case CPU_CODE_STA_INDIRECT_Y:
+				case CPU_CODE_STA_ZERO_PAGE:
+				case CPU_CODE_STA_ZERO_PAGE_X:
+					execute_sta(code);
+					break;
+				case CPU_CODE_STX_ABSOLUTE:
+				case CPU_CODE_STX_ZERO_PAGE:
+				case CPU_CODE_STX_ZERO_PAGE_Y:
+					execute_stx(code);
+					break;
+				case CPU_CODE_STY_ABSOLUTE:
+				case CPU_CODE_STY_ZERO_PAGE:
+				case CPU_CODE_STY_ZERO_PAGE_X:
+					execute_sty(code);
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_UNSUPPORTED_CODE,
+						"0x%x", code);
+			}
 		}
 
 		void 

@@ -70,6 +70,130 @@ namespace NES {
 
 				static void _delete(void);
 
+				void execute_adc(
+					__in uint8_t code
+					);
+
+				void execute_and(
+					__in uint8_t code
+					);
+
+				void execute_asl(
+					__in uint8_t code
+					);
+
+				void execute_branch(
+					__in uint8_t code
+					);
+
+				void execute_bit(
+					__in uint8_t code
+					);
+
+				void execute_brk(
+					__in uint8_t code
+					);
+
+				void execute_flag(
+					__in uint8_t code
+					);
+
+				void execute_cmp(
+					__in uint8_t code
+					);
+
+				void execute_cpx(
+					__in uint8_t code
+					);
+
+				void execute_cpy(
+					__in uint8_t code
+					);
+
+				void execute_dec(
+					__in uint8_t code
+					);
+
+				void execute_eor(
+					__in uint8_t code
+					);
+
+				void execute_inc(
+					__in uint8_t code
+					);
+
+				void execute_jmp(
+					__in uint8_t code
+					);
+
+				void execute_jsr(
+					__in uint8_t code
+					);
+
+				void execute_lda(
+					__in uint8_t code
+					);
+
+				void execute_ldx(
+					__in uint8_t code
+					);
+
+				void execute_ldy(
+					__in uint8_t code
+					);
+
+				void execute_lsr(
+					__in uint8_t code
+					);
+
+				void execute_nop(
+					__in uint8_t code
+					);
+
+				void execute_ora(
+					__in uint8_t code
+					);
+
+				void execute_register(
+					__in uint8_t code
+					);
+
+				void execute_rol(
+					__in uint8_t code
+					);
+
+				void execute_ror(
+					__in uint8_t code
+					);
+
+				void execute_rti(
+					__in uint8_t code
+					);
+
+				void execute_rts(
+					__in uint8_t code
+					);
+
+				void execute_sbc(
+					__in uint8_t code
+					);
+
+				void execute_sta(
+					__in uint8_t code
+					);
+
+				void execute_stack(
+					__in uint8_t code
+					);
+
+				void execute_stx(
+					__in uint8_t code
+					);
+
+				void execute_sty(
+					__in uint8_t code
+					);
+
 				void interrupt(
 					__in uint16_t address,
 					__in_opt bool breakpoint = false

@@ -12,7 +12,11 @@ Table of Contents
 Changelog
 =========
 
-##Version 0.1.1539
+##Version 0.1.1540
+*Updated:9/30/2015*
+
+* Added cpu opcode handlers (partial)
+
 *Updated:9/29/2015*
 
 * Added cpu class
