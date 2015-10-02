@@ -23,20 +23,21 @@ int
 main(void)
 {
 	int result = 0;
-	nes_ptr inst = NULL;
+	std::stringstream stream;
 
 	try {
-		std::cout << "NES " << nes::version() << std::endl
-			<< "---" << std::endl;
+		std::cout << "NES " << nes::version() << std::endl;
 
-		inst = nes::acquire();
-		inst->initialize();
-		std::cout << inst->to_string(0, 0, true) << std::endl;
-		inst->uninitialize();
-		std::cout << inst->to_string(0, 0, true) << std::endl;
+#ifndef NDEBUG
+		if(!nes::run_tests(stream)) {
+			std::cout << "---" << std::endl << stream.str() << std::endl;
+		} else {
+#endif // NDEBUG
 
-		// TODO
-
+			// TODO
+#ifndef NDEBUG
+		}
+#endif // NDEBUG
 	} catch(nes_exception &exc) {
 		std::cerr << exc.to_string(true) << std::endl;
 		result = INVALID_TYPE(int);

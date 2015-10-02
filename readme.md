@@ -13,6 +13,10 @@ Changelog
 =========
 
 ##Version 0.1.1540
+*Updated:10/1/2015*
+
+* Added testing framework
+
 *Updated:9/30/2015*
 
 * Added cpu opcode handlers (partial)

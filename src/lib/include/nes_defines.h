@@ -39,6 +39,9 @@ namespace NES {
 	#ifndef __in_opt
 	#define __in_opt
 	#endif // __in_opt
+	#ifndef __inout
+	#define __inout
+	#endif // __inout
 	#ifndef __inout_opt
 	#define __inout_opt
 	#endif // __inout_opt
@@ -61,7 +64,7 @@ namespace NES {
 
 	#define VERSION_MAJ 0
 	#define VERSION_MIN 1
-	#define VERSION_REV 4
+	#define VERSION_REV 5
 	#define VERSION_WEEK 1540
 
 	#define CHECK_STR(_STR_) (!_STR_.empty() ? _STR_.c_str() : EMPTY)

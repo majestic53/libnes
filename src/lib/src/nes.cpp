@@ -108,6 +108,22 @@ namespace NES {
 		return m_initialized;
 	}
 
+#ifndef NDEBUG
+	bool 
+	_nes::run_tests(
+		__in std::stringstream &stream
+		)
+	{
+		bool result;
+
+		// TODO: run test sets
+		result = true;
+		// ---
+
+		return result;
+	}
+#endif // NDEBUG
+
 	std::string 
 	_nes::to_string(
 		__in_opt uint16_t address,

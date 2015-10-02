@@ -20,7 +20,7 @@
 #ifndef NES_H_
 #define NES_H_
 
-//#define NDEBUG
+#define NDEBUG
 
 #ifndef NES
 #define NES libnes
@@ -39,6 +39,17 @@ using namespace NES;
 #include "nes_cpu.h"
 
 using namespace NES::COMP;
+
+#ifndef NDEBUG
+#ifndef TEST
+#define TEST test
+#endif // TEST
+
+#include "nes_test.h"
+
+using namespace NES::TEST;
+
+#endif // NDEBUG
 
 namespace NES {
 
@@ -59,6 +70,12 @@ namespace NES {
 			static bool is_allocated(void);
 
 			bool is_initialized(void);
+
+#ifndef NDEBUG
+			static bool run_tests(
+				__in std::stringstream &stream
+				);
+#endif // NDEBUG
 
 			std::string to_string(
 				__in_opt uint16_t address = 0,
