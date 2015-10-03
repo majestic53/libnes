@@ -28,7 +28,7 @@ all: build archive
 archive:
 	@echo ''
 	@echo '--- BUILDING LIBRARY -----------------------'
-	ar rcs $(DIR_BUILD)$(LIB) $(DIR_BUILD)libnes.o $(DIR_BUILD)nes.o $(DIR_BUILD)nes_cpu.o $(DIR_BUILD)nes_exception.o $(DIR_BUILD)nes_memory.o $(DIR_BUILD)nes_test.o $(DIR_BUILD)nes_test_cpu.o $(DIR_BUILD)nes_memory.o
+	ar rcs $(DIR_BUILD)$(LIB) $(DIR_BUILD)libnes.o $(DIR_BUILD)nes.o $(DIR_BUILD)nes_cpu.o $(DIR_BUILD)nes_exception.o $(DIR_BUILD)nes_memory.o $(DIR_BUILD)nes_test.o $(DIR_BUILD)nes_test_cpu.o $(DIR_BUILD)nes_test_memory.o
 	@echo '--- DONE -----------------------------------'
 	@echo ''
 

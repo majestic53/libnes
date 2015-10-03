@@ -25,7 +25,69 @@ namespace NES {
 
 	namespace TEST {
 
-		// TODO
+		typedef class _nes_test_memory {
+
+			public:
+
+				static nes_test_t acquire(
+					__in void *context
+					);
+
+				static nes_test_t at(
+					__in void *context
+					);
+
+				static nes_test_t clear(
+					__in void *context
+					);
+
+				static nes_test_t flag_check(
+					__in void *context
+					);
+
+				static nes_test_t flag_clear(
+					__in void *context
+					);
+
+				static nes_test_t flag_set(
+					__in void *context
+					);
+
+				static nes_test_t initialize(
+					__in void *context
+					);
+
+				static nes_test_t is_allocated(
+					__in void *context
+					);
+
+				static nes_test_t is_initialized(
+					__in void *context
+					);
+
+				static nes_test_t read(
+					__in void *context
+					);
+
+				static nes_test_set set_generate(void);
+
+				static nes_test_t set_initialize(
+					__in void *context
+					);
+
+				static nes_test_t set_uninitialize(
+					__in void *context
+					);
+
+				static nes_test_t uninitialize(
+					__in void *context
+					);
+
+				static nes_test_t write(
+					__in void *context
+					);
+
+		} nes_test_memory, *nes_test_memory_ptr;
 	}
 }
 

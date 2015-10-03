@@ -137,31 +137,39 @@ namespace NES {
 			__in_opt bool verbose
 			)
 		{
+			uint16_t fill;
+			uint32_t iter, iter_end;
 			std::stringstream result;
-			uint16_t fill, iter, length;
-
+			
 			if(address >= block.size()) {
 				THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_ADDRESS,
 					"addr. {0x%x - 0x%x} (max. 0x%x)", address, address + offset, 
 					block.size() - 1);
 			}
 
+			if((address + offset) >= block.size()) {
+				offset = (block.size() - address);
+			}
+
 			result << "[Sz. " << (offset / BYTES_PER_KBYTE) << " KB (" 
 				<< offset << " bytes)]";
 
-			length = std::min(address + offset, NES_MEMORY_MAX + 1);
+			if(address % BLOCK_WIDTH) {
 
-			fill = (address - (address % BLOCK_WIDTH));
-			if(fill) {
-				result << std::endl << "0x" << VALUE_AS_HEX(uint16_t, fill) 
-					<< " |";
+				fill = (address - (address % BLOCK_WIDTH));
+				if(fill) {
+					result << std::endl << "0x" << VALUE_AS_HEX(uint16_t, fill) 
+						<< " |";
 
-				for(iter = fill; iter < address; ++iter) {
-					result << " --";
+					for(iter = fill; iter < address; ++iter) {
+						result << " --";
+					}
 				}
 			}
 
-			for(iter = address; iter < length; ++iter) {
+			iter_end = (address + offset);
+
+			for(iter = address; iter < iter_end; ++iter) {
 
 				if(!(iter % BLOCK_WIDTH)) {
 					result << std::endl << "0x" << VALUE_AS_HEX(uint16_t, iter) 
@@ -254,6 +262,39 @@ namespace NES {
 			return m_initialized;
 		}
 
+		uint16_t 
+		_nes_memory::read(
+			__in uint16_t address,
+			__in uint16_t offset,
+			__out nes_memory_block &block
+			)
+		{			
+			uint16_t result = offset;
+			nes_memory_block::iterator end;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_NES_MEMORY_EXCEPTION(NES_MEMORY_EXCEPTION_UNINITIALIZED);
+			}
+
+			if(address >= m_block.size()) {
+				THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_ADDRESS,
+					"addr. 0x%x", address);
+			}
+
+			if((address + offset) >= m_block.size()) {
+				result = (m_block.size() - address);
+				end = m_block.end();
+			} else {
+				end = (m_block.begin() + (address + offset));
+			}
+
+			block.insert(block.begin(), m_block.begin() + address, end);
+
+			return result;
+		}
+
 		std::string 
 		_nes_memory::to_string(
 			__in uint16_t address,
@@ -296,12 +337,14 @@ namespace NES {
 			m_initialized = false;
 		}
 
-		void 
+		uint16_t 
 		_nes_memory::write(
 			__in uint16_t address,
 			__in const nes_memory_block &block
 			)
 		{
+			uint16_t iter = 0, result = block.size();
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			if(!m_initialized) {
@@ -313,7 +356,15 @@ namespace NES {
 					"addr. 0x%x", address);
 			}
 
-			m_block.insert(m_block.begin() + address, block.begin(), block.end());
+			if((address + block.size()) >= m_block.size()) {
+				result = (m_block.size() - address);
+			}
+
+			for(; iter < result; ++iter) {
+				m_block.at(address + iter) = block.at(iter);
+			}
+
+			return result;
 		}
 	}
 }

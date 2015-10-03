@@ -26,16 +26,6 @@ namespace NES {
 
 	namespace TEST {
 
-		#define NES_TEST_MAX NES_TEST_SUCCESS
-
-		static const std::string NES_TEST_RESULT_STR[] = {
-			"UNRUN", "FAILURE", "INCONCLUSIVE", "SUCCESS",
-			};
-
-		#define NES_TEST_RESULT_STRING(_TYPE_) \
-			((_TYPE_) > NES_TEST_MAX ? UNKNOWN : \
-			CHECK_STR(NES_TEST_RESULT_STR[_TYPE_]))
-
 		_nes_test::_nes_test(
 			__in const std::string &name,
 			__in nes_test_cb test,
@@ -177,6 +167,11 @@ namespace NES {
 
 			ATOMIC_CALL_RECUR(m_lock);
 
+			if(has_run()
+					&& (m_result != NES_TEST_SUCCESS)) {
+				result << "[" << NES_TEST_RESULT_STRING(m_result) << "] ";
+			}
+
 			result << "<" << NES_TEST_HEADER << "::" << m_name << ">";
 
 			if(verbose) {
@@ -185,11 +180,6 @@ namespace NES {
 					<< ", init. 0x" << VALUE_AS_HEX(nes_test_cb, m_initialize)
 					<< ", uninit. 0x" << VALUE_AS_HEX(nes_test_cb, m_uninitialize) 
 					<< ")";
-			}
-
-			if(has_run()
-					&& (m_result != NES_TEST_SUCCESS)) {
-				result << " --> " << NES_TEST_RESULT_STRING(m_result);
 			}
 
 			return result.str();
@@ -461,6 +451,12 @@ namespace NES {
 				<< inconclusive << ")";
 
 			for(iter = m_set.begin(); iter != m_set.end(); ++iter) {
+
+				if(!verbose 
+						&& (iter->second.result() == NES_TEST_SUCCESS)) {
+					continue;
+				}
+
 				result << std::endl << "--- " << iter->second.to_string(verbose);
 			}
 

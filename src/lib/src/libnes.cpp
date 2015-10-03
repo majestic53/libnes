@@ -61,7 +61,6 @@ nes_initialize(
 
 	context->major = VERSION_MAJ;
 	context->minor = VERSION_MIN;
-	context->revision = VERSION_REV;
 	context->session = inst;
 	
 exit:

@@ -36,7 +36,6 @@ typedef enum {
 typedef struct {
 	int major;
 	int minor;
-	int revision;
 	void *session;
 } nes_context;
 

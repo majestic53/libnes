@@ -117,11 +117,31 @@ namespace NES {
 		__inout size_t &inconclusive
 		)
 	{
-		bool result;
+		bool result = true;
+
+		success = 0;
+		failure = 0;
+		inconclusive = 0;
+		stream.clear();
+		stream.str(std::string());
+		nes_test_set test_set_mem = nes_test_memory::set_generate();
+		test_set_mem.run_all(success, failure, inconclusive);
+		stream << test_set_mem.to_string() << std::endl;
 
 		// TODO: run test sets
-		result = true;
-		// ---
+
+		stream << "Total: " << success << "/" << failure << "/" << inconclusive 
+			<< std::endl << "Verdict: ";
+
+		if(failure) {
+			stream << NES_TEST_RESULT_STRING(NES_TEST_FAILURE);
+			result = false;
+		} else if(inconclusive) {
+			stream << NES_TEST_RESULT_STRING(NES_TEST_INCONCLUSIVE);
+			result = false;
+		} else {
+			stream << NES_TEST_RESULT_STRING(NES_TEST_SUCCESS);
+		}
 
 		return result;
 	}

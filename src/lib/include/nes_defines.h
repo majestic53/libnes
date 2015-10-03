@@ -64,7 +64,7 @@ namespace NES {
 
 	#define VERSION_MAJ 0
 	#define VERSION_MIN 1
-	#define VERSION_REV 6
+	#define VERSION_REV 7
 	#define VERSION_WEEK 1540
 
 	#define CHECK_STR(_STR_) (!_STR_.empty() ? _STR_.c_str() : EMPTY)

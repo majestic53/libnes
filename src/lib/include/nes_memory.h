@@ -79,6 +79,12 @@ namespace NES {
 
 				bool is_initialized(void);
 
+				uint16_t read(
+					__in uint16_t address,
+					__in uint16_t offset,
+					__out nes_memory_block &block
+					);
+
 				std::string to_string(
 					__in uint16_t address,
 					__in uint16_t offset,
@@ -87,7 +93,7 @@ namespace NES {
 
 				void uninitialize(void);
 
-				void write(
+				uint16_t write(
 					__in uint16_t address,
 					__in const nes_memory_block &block
 					);
