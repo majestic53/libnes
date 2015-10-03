@@ -16,6 +16,7 @@ Changelog
 *Updated:10/2/2015*
 
 * Added cpu/memory unit test files (partial)
+* Added public c-style interface (partial)
 
 *Updated:10/1/2015*
 

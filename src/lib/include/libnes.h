@@ -17,36 +17,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../lib/include/libnes.h"
-#include "../lib/include/nes.h"
+#ifndef LIBNES_H_
+#define LIBNES_H_
 
-int 
-main(void)
-{
-	int result = 0;
-#ifndef NDEBUG
-	std::stringstream stream;
-	size_t failure, inconclusive, success;
-#endif // NDEBUG
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
-	try {
-		std::cout << "NES " << nes::version() << std::endl;
+typedef enum {
+	NES_ERR_NONE = 0,
+	NES_ERR_FAILURE = 0x8000000UL,
+	NES_ERR_INVALID_ARGUMENT,
+	NES_ERR_INVALID_STATE,
+} neserr_t;
 
-#ifndef NDEBUG
-		if(!nes::run_tests(stream, success, failure, inconclusive)) {
-			std::cout << "---" << std::endl << stream.str() << std::endl;
-		}
-#endif // NDEBUG
+#define NES_SUCCESS(_ERR_) (((signed) _ERR_) >= NES_ERR_NONE)
 
-		// TODO
+typedef struct {
+	int major;
+	int minor;
+	int revision;
+	void *session;
+} nes_context;
 
-	} catch(nes_exception &exc) {
-		std::cerr << exc.to_string(true) << std::endl;
-		result = INVALID_TYPE(int);
-	} catch(std::exception &exc) {
-		std::cerr << exc.what() << std::endl;
-		result = INVALID_TYPE(int);
-	}
+neserr_t nes_initialize(
+	nes_context *context
+	);
 
-	return result;
+int nes_is_valid(
+	nes_context *context
+	);
+
+neserr_t nes_uninitialize(
+	nes_context *context
+	);
+
+const char *nes_version(void);
+
+#ifdef __cplusplus
 }
+#endif // __cplusplus
+
+#endif // LIBNES_H_
