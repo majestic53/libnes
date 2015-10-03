@@ -28,11 +28,11 @@ all: build archive
 archive:
 	@echo ''
 	@echo '--- BUILDING LIBRARY -----------------------'
-	ar rcs $(DIR_BUILD)$(LIB) $(DIR_BUILD)nes.o $(DIR_BUILD)nes_cpu.o $(DIR_BUILD)nes_exception.o $(DIR_BUILD)nes_memory.o $(DIR_BUILD)nes_test.o
+	ar rcs $(DIR_BUILD)$(LIB) $(DIR_BUILD)nes.o $(DIR_BUILD)nes_cpu.o $(DIR_BUILD)nes_exception.o $(DIR_BUILD)nes_memory.o $(DIR_BUILD)nes_test.o $(DIR_BUILD)nes_test_cpu.o $(DIR_BUILD)nes_memory.o
 	@echo '--- DONE -----------------------------------'
 	@echo ''
 
-build: nes.o nes_cpu.o nes_exception.o nes_memory.o nes_test.o
+build: nes.o nes_cpu.o nes_exception.o nes_memory.o nes_test.o nes_test_cpu.o nes_test_memory.o
 
 nes.o: $(DIR_SRC)nes.cpp $(DIR_INC)nes.h
 	$(CC) $(CC_FLAGS) -c $(DIR_SRC)nes.cpp -o $(DIR_BUILD)nes.o
@@ -52,3 +52,9 @@ nes_memory.o: $(DIR_SRC)nes_memory.cpp $(DIR_INC)nes_memory.h
 
 nes_test.o: $(DIR_SRC)nes_test.cpp $(DIR_INC)nes_test.h
 	$(CC) $(CC_FLAGS) -c $(DIR_SRC)nes_test.cpp -o $(DIR_BUILD)nes_test.o
+
+nes_test_cpu.o: $(DIR_SRC)nes_test_cpu.cpp $(DIR_INC)nes_test_cpu.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC)nes_test_cpu.cpp -o $(DIR_BUILD)nes_test_cpu.o
+
+nes_test_memory.o: $(DIR_SRC)nes_test_memory.cpp $(DIR_INC)nes_test_memory.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC)nes_test_memory.cpp -o $(DIR_BUILD)nes_test_memory.o

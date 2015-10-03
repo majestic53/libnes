@@ -20,7 +20,7 @@
 #ifndef NES_H_
 #define NES_H_
 
-#define NDEBUG
+//#define NDEBUG
 
 #ifndef NES
 #define NES libnes
@@ -46,6 +46,8 @@ using namespace NES::COMP;
 #endif // TEST
 
 #include "nes_test.h"
+#include "nes_test_cpu.h"
+#include "nes_test_memory.h"
 
 using namespace NES::TEST;
 
@@ -73,7 +75,10 @@ namespace NES {
 
 #ifndef NDEBUG
 			static bool run_tests(
-				__in std::stringstream &stream
+				__in std::stringstream &stream,
+				__inout size_t &success,
+				__inout size_t &failure,
+				__inout size_t &inconclusive
 				);
 #endif // NDEBUG
 

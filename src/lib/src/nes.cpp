@@ -111,7 +111,10 @@ namespace NES {
 #ifndef NDEBUG
 	bool 
 	_nes::run_tests(
-		__in std::stringstream &stream
+		__in std::stringstream &stream,
+		__inout size_t &success,
+		__inout size_t &failure,
+		__inout size_t &inconclusive
 		)
 	{
 		bool result;

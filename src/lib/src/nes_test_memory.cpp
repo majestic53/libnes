@@ -17,35 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../lib/include/nes.h"
-
-int 
-main(void)
-{
-	int result = 0;
-#ifndef NDEBUG
-	std::stringstream stream;
-	size_t failure, inconclusive, success;
-#endif // NDEBUG
-
-	try {
-		std::cout << "NES " << nes::version() << std::endl;
+#include "../include/nes.h"
 
 #ifndef NDEBUG
-		if(!nes::run_tests(stream, success, failure, inconclusive)) {
-			std::cout << "---" << std::endl << stream.str() << std::endl;
-		}
-#endif // NDEBUG
+
+namespace NES {
+
+	namespace TEST {
 
 		// TODO
-
-	} catch(nes_exception &exc) {
-		std::cerr << exc.to_string(true) << std::endl;
-		result = INVALID_TYPE(int);
-	} catch(std::exception &exc) {
-		std::cerr << exc.what() << std::endl;
-		result = INVALID_TYPE(int);
 	}
-
-	return result;
 }
+
+#endif // NDEBUG
