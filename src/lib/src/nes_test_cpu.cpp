@@ -334,7 +334,7 @@ exit:
 				sp = inst->m_register_sp;
 				x = inst->m_register_x;
 				y = inst->m_register_y;
-				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
+				CPU_FLAG_SET(inst->m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
 				p = inst->m_register_p;
 				inst->irq();
 
@@ -349,14 +349,13 @@ exit:
 					goto exit;
 				}
 
-				CPU_FLAG_SET(inst->m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
 				p = inst->m_register_p;
-				CPU_FLAG_CLEAR(p, CPU_FLAG_BREAKPOINT | CPU_FLAG_INTERRUPT_ENABLED);
+				CPU_FLAG_SET(p, CPU_FLAG_INTERRUPT_ENABLED);
 				inst->store_word(CPU_INTERRUPT_IRQ_ADDRESS, TEST_CPU_INTERRUPT_VECTOR);
 				inst->irq();
 
-				if(CPU_FLAG_CHECK(inst->m_register_p, CPU_FLAG_BREAKPOINT)
-						|| (inst->m_cycles != (cycles + CPU_INTERRUPT_CYCLES))
+				if((inst->m_cycles != (cycles + CPU_INTERRUPT_CYCLES))
 						|| (inst->m_register_a != a)
 						|| (inst->m_register_p != p)
 						|| (inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR)
@@ -366,6 +365,8 @@ exit:
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
+
+				CPU_FLAG_CLEAR(p, CPU_FLAG_BREAKPOINT);
 
 				if((mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 1) != p)
 						|| (mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 2)
@@ -527,14 +528,12 @@ exit:
 				sp = inst->m_register_sp;
 				x = inst->m_register_x;
 				y = inst->m_register_y;
-				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
+				CPU_FLAG_SET(inst->m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
 				p = inst->m_register_p;
-				CPU_FLAG_CLEAR(p, CPU_FLAG_BREAKPOINT | CPU_FLAG_INTERRUPT_ENABLED);
 				inst->store_word(CPU_INTERRUPT_NMI_ADDRESS, TEST_CPU_INTERRUPT_VECTOR);
 				inst->nmi();
 
-				if(CPU_FLAG_CHECK(inst->m_register_p, CPU_FLAG_BREAKPOINT)
-						|| (inst->m_cycles != (cycles + CPU_INTERRUPT_CYCLES))
+				if((inst->m_cycles != (cycles + CPU_INTERRUPT_CYCLES))
 						|| (inst->m_register_a != a)
 						|| (inst->m_register_p != p)
 						|| (inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR)
@@ -544,6 +543,8 @@ exit:
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
+
+				CPU_FLAG_CLEAR(p, CPU_FLAG_BREAKPOINT);
 
 				if((mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 1) != p)
 						|| (mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 2)
@@ -560,13 +561,12 @@ exit:
 				sp = inst->m_register_sp;
 				x = inst->m_register_x;
 				y = inst->m_register_y;
-				CPU_FLAG_SET(inst->m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
 				p = inst->m_register_p;
-				CPU_FLAG_CLEAR(p, CPU_FLAG_BREAKPOINT | CPU_FLAG_INTERRUPT_ENABLED);
+				CPU_FLAG_SET(p, CPU_FLAG_INTERRUPT_ENABLED);
 				inst->nmi();
 
-				if(CPU_FLAG_CHECK(inst->m_register_p, CPU_FLAG_BREAKPOINT)
-						|| (inst->m_cycles != (cycles + CPU_INTERRUPT_CYCLES))
+				if((inst->m_cycles != (cycles + CPU_INTERRUPT_CYCLES))
 						|| (inst->m_register_a != a)
 						|| (inst->m_register_p != p)
 						|| (inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR)
@@ -576,6 +576,8 @@ exit:
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
+
+				CPU_FLAG_CLEAR(p, CPU_FLAG_BREAKPOINT);
 
 				if((mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 1) != p)
 						|| (mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 2)

@@ -22,6 +22,9 @@
 
 namespace NES {
 
+	#define CPU_CODE_BRANCH_CYCLES 2
+	#define CPU_CODE_NOP_CYCLES 1
+
 	#define CPU_CODE_ADC_ABSOLUTE 0x6d
 	#define CPU_CODE_ADC_ABSOLUTE_X 0x7d
 	#define CPU_CODE_ADC_ABSOLUTE_Y 0x79
