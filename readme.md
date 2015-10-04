@@ -13,6 +13,10 @@ Changelog
 =========
 
 ##Version 0.1.1540
+*Updated:10/3/2015*
+
+* Added cpu unit tests (partial)
+
 *Updated:10/2/2015*
 
 * Added cpu/memory unit test files (partial)

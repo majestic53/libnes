@@ -100,6 +100,10 @@ namespace NES {
 
 			protected:
 
+#ifndef NDEBUG
+				friend class NES::TEST::_nes_test_memory;
+#endif // NDEBUG
+
 				_nes_memory(void);
 
 				_nes_memory(

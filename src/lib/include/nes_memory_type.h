@@ -26,6 +26,8 @@ namespace NES {
 
 	namespace COMP {
 
+		#define NES_MEMORY_MAX UINT16_MAX
+
 		#define NES_MEMORY_HEADER NES_HEADER "::MEM"
 
 		#ifndef NDEBUG

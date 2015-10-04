@@ -34,6 +34,9 @@ namespace NES {
 
 		#define NES_TEST_MAX NES_TEST_SUCCESS
 
+		#define NES_TEST_SUCCESS(_TYPE_) \
+			(((_TYPE_) == NES_TEST_NONE) || ((_TYPE_) == NES_TEST_SUCCESS))
+
 		static const std::string NES_TEST_RESULT_STR[] = {
 			"UNRUN", "FAILURE", "INCONCLUSIVE", "SUCCESS",
 			};

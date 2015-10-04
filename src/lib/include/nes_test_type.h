@@ -28,7 +28,6 @@ namespace NES {
 	namespace TEST {
 
 		#define NES_TEST_HEADER NES_HEADER "::TEST"
-		#define NES_TEST_SET_HEADER NES_HEADER "::TESTSET"
 
 		enum {
 			NES_TEST_EXCEPTION_FOUND = 0,

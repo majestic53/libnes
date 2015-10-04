@@ -25,30 +25,6 @@ namespace NES {
 
 	namespace COMP {
 
-		#define CPU_CYCLES_INIT 0
-		#define CPU_FLAG_BREAKPOINT 0x10
-		#define CPU_FLAG_CARRY 0x1
-		#define CPU_FLAG_INTERRUPT_ENABLED 0x4
-		#define CPU_FLAG_NEGATIVE 0x80
-		#define CPU_FLAG_OVERFLOW 0x40
-		#define CPU_FLAG_ZERO 0x2
-		#define CPU_INTERRUPT_CYCLES 3
-		#define CPU_INTERRUPT_IRQ_ADDRESS 0xfffe
-		#define CPU_INTERRUPT_NMI_ADDRESS 0xfffa
-		#define CPU_INTERRUPT_RESET_ADDRESS 0xfffc
-		#define CPU_REGISTER_A_INIT 0
-		#define CPU_REGISTER_P_INIT \
-			(CPU_FLAG_INTERRUPT_ENABLED | CPU_FLAG_ZERO)
-		#define CPU_REGISTER_PC_INIT 0
-		#define CPU_REGISTER_SP_INIT 0xff
-		#define CPU_REGISTER_SP_OFFSET 0x100
-		#define CPU_REGISTER_X_INIT 0
-		#define CPU_REGISTER_Y_INIT 0
-
-		#define CPU_FLAG_CHECK(_P_, _FLAG_) ((_P_) & (_FLAG_))
-		#define CPU_FLAG_CLEAR(_P_, _FLAG_) ((_P_) &= ~(_FLAG_))
-		#define CPU_FLAG_SET(_P_, _FLAG_) ((_P_) |= (_FLAG_))
-
 		_nes_cpu *_nes_cpu::m_instance = NULL;
 
 		_nes_cpu::_nes_cpu(void) :
@@ -582,14 +558,17 @@ namespace NES {
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-			push_word(m_register_pc);
-			m_register_pc = address;
+			CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
 
 			if(breakpoint) {
 				CPU_FLAG_SET(m_register_p, CPU_FLAG_BREAKPOINT);
+			} else {
+				CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_BREAKPOINT);
 			}
 
+			push_word(m_register_pc);
 			push(m_register_p);
+			m_register_pc = load_word(address);
 			m_cycles += CPU_INTERRUPT_CYCLES;
 		}
 
@@ -597,8 +576,8 @@ namespace NES {
 		_nes_cpu::interrupt_return(void)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-			m_register_p = pop();
 			CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_BREAKPOINT);
+			m_register_p = pop();
 			m_register_pc = pop_word();
 		}
 

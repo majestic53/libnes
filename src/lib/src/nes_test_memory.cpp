@@ -37,23 +37,23 @@ namespace NES {
 			};
 
 		enum {
-			NES_MEMORY_TEST_ACQUIRE = 0,
-			NES_MEMORY_TEST_AT,
-			NES_MEMORY_TEST_CLEAR,
-			NES_MEMORY_TEST_FLAG_CHECK,
-			NES_MEMORY_TEST_FLAG_CLEAR,
-			NES_MEMORY_TEST_FLAG_SET,
-			NES_MEMORY_TEST_INITIALIZE,
-			NES_MEMORY_TEST_IS_ALLOCATED,
-			NES_MEMORY_TEST_IS_INITIALIZE,
-			NES_MEMORY_TEST_READ,
-			NES_MEMORY_TEST_UNINITIALIZE,
-			NES_MEMORY_TEST_WRITE,
+			NES_TEST_MEMORY_ACQUIRE = 0,
+			NES_TEST_MEMORY_AT,
+			NES_TEST_MEMORY_CLEAR,
+			NES_TEST_MEMORY_FLAG_CHECK,
+			NES_TEST_MEMORY_FLAG_CLEAR,
+			NES_TEST_MEMORY_FLAG_SET,
+			NES_TEST_MEMORY_INITIALIZE,
+			NES_TEST_MEMORY_IS_ALLOCATED,
+			NES_TEST_MEMORY_IS_INITIALIZE,
+			NES_TEST_MEMORY_READ,
+			NES_TEST_MEMORY_UNINITIALIZE,
+			NES_TEST_MEMORY_WRITE,
 		};
 
-		#define NES_MEMORY_TEST_MAX NES_MEMORY_TEST_WRITE
+		#define NES_TEST_MEMORY_MAX NES_TEST_MEMORY_WRITE
 
-		static const std::string NES_MEMORY_TEST_STR[] = {
+		static const std::string NES_TEST_MEMORY_STR[] = {
 			NES_MEMORY_HEADER "::ACQUIRE",
 			NES_MEMORY_HEADER "::AT",
 			NES_MEMORY_HEADER "::CLEAR",
@@ -68,11 +68,11 @@ namespace NES {
 			NES_MEMORY_HEADER "::WRITE",
 			};
 
-		#define NES_MEMORY_TEST_STRING(_TYPE_) \
-			((_TYPE_) > NES_MEMORY_TEST_MAX ? UNKNOWN : \
-			CHECK_STR(NES_MEMORY_TEST_STR[_TYPE_]))
+		#define NES_TEST_MEMORY_STRING(_TYPE_) \
+			((_TYPE_) > NES_TEST_MEMORY_MAX ? UNKNOWN : \
+			CHECK_STR(NES_TEST_MEMORY_STR[_TYPE_]))
 
-		static const nes_test_cb NES_MEMORY_TEST_CB[] = {
+		static const nes_test_cb NES_TEST_MEMORY_CB[] = {
 			nes_test_memory::acquire,
 			nes_test_memory::at,
 			nes_test_memory::clear,
@@ -87,9 +87,9 @@ namespace NES {
 			nes_test_memory::write,
 			};
 
-		#define NES_MEMORY_TEST_CALLBACK(_TYPE_) \
-			((_TYPE_) > NES_MEMORY_TEST_MAX ? NULL : \
-			NES_MEMORY_TEST_CB[_TYPE_])
+		#define NES_TEST_MEMORY_CALLBACK(_TYPE_) \
+			((_TYPE_) > NES_TEST_MEMORY_MAX ? NULL : \
+			NES_TEST_MEMORY_CB[_TYPE_])
 
 		nes_test_t 
 		_nes_test_memory::acquire(
@@ -139,6 +139,18 @@ exit:
 
 			try {
 
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+
+					try {
+						inst->at(TEST_MEM_ADDRESS);
+						result = NES_TEST_FAILURE;
+						goto exit;
+					} catch(...) { }
+
+					inst->initialize();
+				}
+
 				if(inst->at(TEST_MEM_ADDRESS) != 0) {
 					result = NES_TEST_FAILURE;
 					goto exit;
@@ -178,6 +190,19 @@ exit:
 			}
 
 			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+
+					try {
+						inst->clear();
+						result = NES_TEST_FAILURE;
+						goto exit;
+					} catch(...) { }
+
+					inst->initialize();
+				}
+
 				inst->at(TEST_MEM_ADDRESS) = TEST_MEM_VALUE;
 				inst->clear();
 
@@ -214,6 +239,19 @@ exit:
 			}
 
 			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+
+					try {
+						inst->flag_check(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
+						result = NES_TEST_FAILURE;
+						goto exit;
+					} catch(...) { }
+
+					inst->initialize();
+				}
+
 				inst->at(TEST_MEM_ADDRESS) = TEST_MEM_VALUE;
 
 				if(!inst->flag_check(TEST_MEM_ADDRESS, TEST_MEM_VALUE)) {
@@ -254,6 +292,19 @@ exit:
 			}
 
 			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+
+					try {
+						inst->flag_clear(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
+						result = NES_TEST_FAILURE;
+						goto exit;
+					} catch(...) { }
+
+					inst->initialize();
+				}
+
 				inst->at(TEST_MEM_ADDRESS) = TEST_MEM_VALUE;
 				inst->flag_clear(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
 
@@ -290,6 +341,19 @@ exit:
 			}
 
 			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+
+					try {
+						inst->flag_set(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
+						result = NES_TEST_FAILURE;
+						goto exit;
+					} catch(...) { }
+
+					inst->initialize();
+				}
+
 				inst->flag_set(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
 
 				if(!inst->flag_check(TEST_MEM_ADDRESS, TEST_MEM_VALUE)) {
@@ -325,6 +389,12 @@ exit:
 			}
 
 			try {
+
+				try {
+					inst->initialize();
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
 
 				if(inst->is_initialized()) {
 					inst->uninitialize();
@@ -442,6 +512,18 @@ exit:
 
 			try {
 
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+
+					try {
+						inst->read(TEST_MEM_ADDRESS, TEST_MEM_OFFSET, blk);
+						result = NES_TEST_FAILURE;
+						goto exit;
+					} catch(...) { }
+
+					inst->initialize();
+				}
+
 				if(inst->read(TEST_MEM_ADDRESS, TEST_MEM_OFFSET, blk) != TEST_MEM_OFFSET) {
 					result = NES_TEST_FAILURE;
 					goto exit;
@@ -501,8 +583,8 @@ exit:
 			size_t iter = 0;
 			nes_test_set result(NES_MEMORY_HEADER);
 
-			for(; iter <= NES_MEMORY_TEST_MAX; ++iter) {
-				result.insert(nes_test(NES_MEMORY_TEST_STRING(iter), NES_MEMORY_TEST_CALLBACK(iter), 
+			for(; iter <= NES_TEST_MEMORY_MAX; ++iter) {
+				result.insert(nes_test(NES_TEST_MEMORY_STRING(iter), NES_TEST_MEMORY_CALLBACK(iter), 
 					nes_memory::acquire(), nes_test_memory::test_initialize, 
 					nes_test_memory::test_uninitialize));
 			}
@@ -596,10 +678,13 @@ exit:
 			}
 
 			try {
+				inst->uninitialize();
 
-				if(inst->is_initialized()) {
+				try {
 					inst->uninitialize();
-				}
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
 
 				if(inst->is_initialized()) { 
 					result = NES_TEST_FAILURE;
@@ -638,6 +723,18 @@ exit:
 			}
 
 			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+
+					try {
+						inst->write(TEST_MEM_ADDRESS, TEST_BLK);
+						result = NES_TEST_FAILURE;
+						goto exit;
+					} catch(...) { }
+
+					inst->initialize();
+				}
 
 				if(inst->write(TEST_MEM_ADDRESS, TEST_BLK) != TEST_MEM_OFFSET) {
 					result = NES_TEST_FAILURE;

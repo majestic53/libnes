@@ -31,15 +31,6 @@
 
 using namespace NES;
 
-#ifndef COMP
-#define COMP component
-#endif // COMP
-
-#include "nes_memory.h"
-#include "nes_cpu.h"
-
-using namespace NES::COMP;
-
 #ifndef NDEBUG
 #ifndef TEST
 #define TEST test
@@ -50,8 +41,16 @@ using namespace NES::COMP;
 #include "nes_test_memory.h"
 
 using namespace NES::TEST;
-
 #endif // NDEBUG
+
+#ifndef COMP
+#define COMP component
+#endif // COMP
+
+#include "nes_memory.h"
+#include "nes_cpu.h"
+
+using namespace NES::COMP;
 
 namespace NES {
 

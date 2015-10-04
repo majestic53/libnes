@@ -24,8 +24,6 @@ namespace NES {
 
 	namespace COMP {
 
-		#define NES_MEMORY_MAX UINT16_MAX
-
 		_nes_memory *_nes_memory::m_instance = NULL;
 
 		_nes_memory::_nes_memory(void) :

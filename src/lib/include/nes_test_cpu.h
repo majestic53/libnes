@@ -25,7 +25,71 @@ namespace NES {
 
 	namespace TEST {
 
-		// TODO
+		typedef class _nes_test_cpu {
+
+			public:
+
+				static nes_test_t acquire(
+					__in void *context
+					);
+
+				static nes_test_t clear(
+					__in void *context
+					);
+
+				static nes_test_t cycles(
+					__in void *context
+					);
+
+				static nes_test_t initialize(
+					__in void *context
+					);
+
+				static nes_test_t irq(
+					__in void *context
+					);
+
+				static nes_test_t is_allocated(
+					__in void *context
+					);
+
+				static nes_test_t is_initialized(
+					__in void *context
+					);
+
+				static nes_test_t nmi(
+					__in void *context
+					);
+
+				static nes_test_t reset(
+					__in void *context
+					);
+
+				static nes_test_set set_generate(void);
+
+				static nes_test_t step(
+					__in void *context
+					);
+
+				static nes_test_t test_initialize(
+					__in void *context
+					);
+
+				static nes_test_t test_uninitialize(
+					__in void *context
+					);
+
+				static nes_test_t uninitialize(
+					__in void *context
+					);
+
+			protected:
+
+				static nes_test_t random_state(
+					__in void *context
+					);
+
+		} nes_test_cpu, *nes_test_cpu_ptr;
 	}
 }
 

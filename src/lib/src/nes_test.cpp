@@ -446,7 +446,7 @@ namespace NES {
 
 			results(success, failure, inconclusive);
 
-			result << "<" << NES_TEST_SET_HEADER << "::" << m_name << ">[" 
+			result << "<" << NES_TEST_HEADER << "::" << m_name << ">[" 
 				<< size() << "] (" << success << "/" << failure << "/" 
 				<< inconclusive << ")";
 
@@ -457,7 +457,7 @@ namespace NES {
 					continue;
 				}
 
-				result << std::endl << "--- " << iter->second.to_string(verbose);
+				result << std::endl << "\t" << iter->second.to_string(verbose);
 			}
 
 			return result.str();

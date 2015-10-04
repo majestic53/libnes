@@ -231,6 +231,10 @@ namespace NES {
 					__in uint16_t value
 					);
 
+#ifndef NDEBUG
+				friend class NES::TEST::_nes_test_cpu;
+#endif // NDEBUG
+
 				uint32_t m_cycles;
 
 				static _nes_cpu *m_instance;

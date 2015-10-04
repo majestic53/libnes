@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <random>
 #include "../include/nes.h"
 #include "../include/nes_type.h"
 
@@ -119,6 +120,7 @@ namespace NES {
 	{
 		bool result = true;
 
+		std::srand((uint32_t) std::time(NULL));
 		success = 0;
 		failure = 0;
 		inconclusive = 0;
@@ -127,6 +129,9 @@ namespace NES {
 		nes_test_set test_set_mem = nes_test_memory::set_generate();
 		test_set_mem.run_all(success, failure, inconclusive);
 		stream << test_set_mem.to_string() << std::endl;
+		nes_test_set test_set_cpu = nes_test_cpu::set_generate();
+		test_set_cpu.run_all(success, failure, inconclusive);
+		stream << test_set_cpu.to_string() << std::endl;
 
 		// TODO: run test sets
 
