@@ -71,11 +71,11 @@ namespace NES {
 
 				static nes_test_set set_generate(void);
 
-				static nes_test_t set_initialize(
+				static nes_test_t test_initialize(
 					__in void *context
 					);
 
-				static nes_test_t set_uninitialize(
+				static nes_test_t test_uninitialize(
 					__in void *context
 					);
 

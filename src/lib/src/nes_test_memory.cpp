@@ -26,6 +26,16 @@ namespace NES {
 
 	namespace TEST {
 
+		#define TEST_MEM_ADDRESS 0x100
+		#define TEST_MEM_ADDRESS_HIGH 0xfffe
+		#define TEST_MEM_OFFSET 0x4
+		#define TEST_MEM_OFFSET_HIGH 0x2
+		#define TEST_MEM_VALUE 0x40
+
+		static const nes_memory_block TEST_BLK = { 
+			0xaa, 0xbb, 0xcc, 0xdd 
+			};
+
 		enum {
 			NES_MEMORY_TEST_ACQUIRE = 0,
 			NES_MEMORY_TEST_AT,
@@ -90,8 +100,15 @@ namespace NES {
 
 			try {
 
-				// TODO
+				if(!nes_memory::acquire()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 
+				if(!nes_memory::is_allocated()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -108,12 +125,30 @@ exit:
 			__in void *context
 			)
 		{
+			nes_memory_ptr inst = NULL;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
 
 			try {
 
-				// TODO
+				if(inst->at(TEST_MEM_ADDRESS) != 0) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 
+				inst->at(TEST_MEM_ADDRESS) = TEST_MEM_VALUE;
+				if(inst->at(TEST_MEM_ADDRESS) != TEST_MEM_VALUE) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -130,12 +165,26 @@ exit:
 			__in void *context
 			)
 		{
+			nes_memory_ptr inst = NULL;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
 			try {
+				inst->at(TEST_MEM_ADDRESS) = TEST_MEM_VALUE;
+				inst->clear();
 
-				// TODO
-
+				if(inst->at(TEST_MEM_ADDRESS) != 0) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -152,12 +201,30 @@ exit:
 			__in void *context
 			)
 		{
+			nes_memory_ptr inst = NULL;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
 			try {
+				inst->at(TEST_MEM_ADDRESS) = TEST_MEM_VALUE;
 
-				// TODO
+				if(!inst->flag_check(TEST_MEM_ADDRESS, TEST_MEM_VALUE)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 
+				if(inst->flag_check(TEST_MEM_ADDRESS, 0x1)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -174,12 +241,26 @@ exit:
 			__in void *context
 			)
 		{
+			nes_memory_ptr inst = NULL;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
 			try {
+				inst->at(TEST_MEM_ADDRESS) = TEST_MEM_VALUE;
+				inst->flag_clear(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
 
-				// TODO
-
+				if(inst->flag_check(TEST_MEM_ADDRESS, TEST_MEM_VALUE)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -196,12 +277,25 @@ exit:
 			__in void *context
 			)
 		{
+			nes_memory_ptr inst = NULL;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
 			try {
+				inst->flag_set(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
 
-				// TODO
-
+				if(!inst->flag_check(TEST_MEM_ADDRESS, TEST_MEM_VALUE)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -218,12 +312,30 @@ exit:
 			__in void *context
 			)
 		{
+			nes_memory_ptr inst = NULL;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
 
 			try {
 
-				// TODO
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
 
+				inst->initialize();
+
+				if(!inst->is_initialized()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -242,10 +354,16 @@ exit:
 		{
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
+			if(!context) {
+				goto exit;
+			}
+
 			try {
 
-				// TODO
-
+				if(!nes_memory::is_allocated()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -262,12 +380,35 @@ exit:
 			__in void *context
 			)
 		{
+			nes_memory_ptr inst = NULL;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
 
 			try {
 
-				// TODO
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
 
+				if(inst->is_initialized()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->initialize();
+
+				if(!inst->is_initialized()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -284,12 +425,65 @@ exit:
 			__in void *context
 			)
 		{
+			size_t iter = 0;
+			nes_memory_block blk;
+			nes_memory_ptr inst = NULL;
+			nes_memory_block::iterator blk_iter;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
 
 			try {
 
-				// TODO
+				if(inst->read(TEST_MEM_ADDRESS, TEST_MEM_OFFSET, blk) != TEST_MEM_OFFSET) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 
+				for(blk_iter = blk.begin(); blk_iter != blk.end(); ++blk_iter) {
+
+					if(*blk_iter != 0) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				inst->write(TEST_MEM_ADDRESS, TEST_BLK);
+
+				if(inst->read(TEST_MEM_ADDRESS, TEST_MEM_OFFSET, blk) != TEST_BLK.size()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				for(iter = 0; iter < TEST_BLK.size(); ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				inst->write(TEST_MEM_ADDRESS_HIGH, TEST_BLK);
+
+				if(inst->read(TEST_MEM_ADDRESS_HIGH, TEST_MEM_OFFSET, blk) != TEST_MEM_OFFSET_HIGH) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				for(iter = 0; iter < TEST_MEM_OFFSET_HIGH; ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -309,24 +503,37 @@ exit:
 
 			for(; iter <= NES_MEMORY_TEST_MAX; ++iter) {
 				result.insert(nes_test(NES_MEMORY_TEST_STRING(iter), NES_MEMORY_TEST_CALLBACK(iter), 
-					nes_memory::acquire(), nes_test_memory::set_initialize, 
-					nes_test_memory::set_uninitialize));
+					nes_memory::acquire(), nes_test_memory::test_initialize, 
+					nes_test_memory::test_uninitialize));
 			}
 
 			return result;
 		}
 
 		nes_test_t 
-		_nes_test_memory::set_initialize(
+		_nes_test_memory::test_initialize(
 			__in void *context
 			)
 		{
+			nes_memory_ptr inst = NULL;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
 
 			try {
 
-				// TODO
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
 
+				inst->initialize();
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -339,16 +546,27 @@ exit:
 		}
 
 		nes_test_t 
-		_nes_test_memory::set_uninitialize(
+		_nes_test_memory::test_uninitialize(
 			__in void *context
 			)
 		{
+			nes_memory_ptr inst = NULL;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
 
 			try {
 
-				// TODO
-
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -365,12 +583,29 @@ exit:
 			__in void *context
 			)
 		{
+			nes_memory_ptr inst = NULL;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
 
 			try {
 
-				// TODO
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
 
+				if(inst->is_initialized()) { 
+					result = NES_TEST_FAILURE;
+				}
+
+				inst->initialize();
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -387,12 +622,52 @@ exit:
 			__in void *context
 			)
 		{
+			size_t iter = 0;
+			nes_memory_block blk;
+			nes_memory_ptr inst = NULL;
+			nes_memory_block::iterator blk_iter;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_memory_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
 
 			try {
 
-				// TODO
+				if(inst->write(TEST_MEM_ADDRESS, TEST_BLK) != TEST_MEM_OFFSET) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 
+				inst->read(TEST_MEM_ADDRESS, TEST_MEM_OFFSET, blk);
+
+				for(iter = 0; iter < TEST_BLK.size(); ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				if(inst->write(TEST_MEM_ADDRESS_HIGH, TEST_BLK) != TEST_MEM_OFFSET_HIGH) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->read(TEST_MEM_ADDRESS_HIGH, TEST_MEM_OFFSET, blk);
+
+				for(iter = 0; iter < TEST_MEM_OFFSET_HIGH; ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
