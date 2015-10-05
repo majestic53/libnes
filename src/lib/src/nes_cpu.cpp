@@ -198,7 +198,7 @@ namespace NES {
 				++m_cycles;
 			}
 
-			m_cycles += CPU_CODE_BRANCH_CYCLES;
+			m_cycles += CPU_CODE_BRANCH_RELATIVE_CYCLES;
 		}
 
 		void 
@@ -220,13 +220,15 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO: call interrupt with breakpoint flag set to true
+			if(code != CPU_CODE_BRK_IMPLIED) {
+				THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_BRK_CODE,
+					"0x%x", code);
+			}
 
-			m_cycles += cycles;
+			interrupt(CPU_INTERRUPT_IRQ_ADDRESS, true);
+			m_cycles += CPU_CODE_BRK_IMPLIED_CYCLES;
 		}
 
 		void 
@@ -234,13 +236,36 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_CLC_IMPLIED:
+					CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_CARRY);
+					break;
+				case CPU_CODE_CLD_IMPLIED:
+					CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_DECIMAL);
+					break;
+				case CPU_CODE_CLI_IMPLIED:
+					CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
+					break;
+				case CPU_CODE_CLV_IMPLIED:
+					CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_OVERFLOW);
+					break;
+				case CPU_CODE_SEC_IMPLIED:
+					CPU_FLAG_SET(m_register_p, CPU_FLAG_CARRY);
+					break;
+				case CPU_CODE_SED_IMPLIED:
+					CPU_FLAG_SET(m_register_p, CPU_FLAG_DECIMAL);
+					break;
+				case CPU_CODE_SEI_IMPLIED:
+					CPU_FLAG_SET(m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_FLAG_CODE,
+						"0x%x", code);
+			}
 
-			m_cycles += cycles;
+			m_cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 		}
 
 		void 
@@ -417,7 +442,13 @@ namespace NES {
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-			m_cycles += CPU_CODE_NOP_CYCLES;
+
+			if(code != CPU_CODE_NOP_IMPLIED) {
+				THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_NOP_CODE,
+					"0x%x", code);
+			}
+
+			m_cycles += CPU_CODE_NOP_IMPLIED_CYCLES;
 		}
 
 		void 
@@ -439,13 +470,42 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
+			uint8_t value = 0;
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_DEX_IMPLIED:
+					value = --m_register_x;
+					break;
+				case CPU_CODE_DEY_IMPLIED:
+					value = --m_register_y;
+					break;
+				case CPU_CODE_INX_IMPLIED:
+					value = ++m_register_x;
+					break;
+				case CPU_CODE_INY_IMPLIED:
+					value = ++m_register_y;
+					break;
+				case CPU_CODE_TAX_IMPLIED:
+					value = (m_register_x = m_register_a);
+					break;
+				case CPU_CODE_TAY_IMPLIED:
+					value = (m_register_y = m_register_a);
+					break;
+				case CPU_CODE_TXA_IMPLIED:
+					value = (m_register_a = m_register_x);
+					break;
+				case CPU_CODE_TYA_IMPLIED:
+					value = (m_register_a = m_register_y);
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_REGISTER_CODE,
+						"0x%x", code);
+			}
 
-			m_cycles += cycles;
+			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+			CPU_FLAG_SET_CONDITIONAL(value & CPU_FLAG_NEGATIVE, m_register_p, CPU_FLAG_NEGATIVE);
+			m_cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
 		}
 
 		void 
@@ -481,13 +541,15 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO: call interrupt_return
+			if(code != CPU_CODE_RTI_IMPLIED) {
+				THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_RTI_CODE,
+					"0x%x", code);
+			}
 
-			m_cycles += cycles;
+			return_interrupt();
+			m_cycles += CPU_CODE_RTI_IMPLIED_CYCLES;
 		}
 
 		void 
@@ -495,13 +557,15 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			if(code != CPU_CODE_RTS_IMPLIED) {
+				THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_RTS_CODE,
+					"0x%x", code);
+			}
 
-			m_cycles += cycles;
+			return_subroutine();
+			m_cycles += CPU_CODE_RTS_IMPLIED_CYCLES;
 		}
 
 		void 
@@ -541,7 +605,41 @@ namespace NES {
 
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_PHA_IMPLIED:
+					push(m_register_a);
+					cycles = CPU_CODE_PHA_IMPLIED_CYCLES;
+					break;
+				case CPU_CODE_PHP_IMPLIED:
+					push(m_register_p);
+					cycles = CPU_CODE_PHP_IMPLIED_CYCLES;
+					break;
+				case CPU_CODE_PLA_IMPLIED:
+					m_register_a = pop();
+					CPU_FLAG_SET_CONDITIONAL(!m_register_a, m_register_p, CPU_FLAG_ZERO);
+					CPU_FLAG_SET_CONDITIONAL(m_register_a & CPU_FLAG_NEGATIVE, m_register_p, 
+						CPU_FLAG_NEGATIVE);
+					cycles = CPU_CODE_PLA_IMPLIED_CYCLES;
+					break;
+				case CPU_CODE_PLP_IMPLIED:
+					m_register_p = pop();
+					cycles = CPU_CODE_PLP_IMPLIED_CYCLES;
+					break;
+				case CPU_CODE_TSX_IMPLIED:
+					m_register_x = m_register_sp;
+					CPU_FLAG_SET_CONDITIONAL(!m_register_x, m_register_p, CPU_FLAG_ZERO);
+					CPU_FLAG_SET_CONDITIONAL(m_register_x & CPU_FLAG_NEGATIVE, m_register_p, 
+						CPU_FLAG_NEGATIVE);
+					cycles = CPU_CODE_TSX_IMPLIED_CYCLES;
+					break;
+				case CPU_CODE_TXS_IMPLIED:
+					m_register_sp = m_register_x;
+					cycles = CPU_CODE_TXS_IMPLIED_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_STACK_CODE,
+						"0x%x", code);
+			}
 
 			m_cycles += cycles;
 		}
@@ -608,15 +706,6 @@ namespace NES {
 			push_word(m_register_pc);
 			push(p);
 			m_register_pc = load_word(address);
-			m_cycles += CPU_INTERRUPT_CYCLES;
-		}
-
-		void 
-		_nes_cpu::interrupt_return(void)
-		{
-			ATOMIC_CALL_RECUR(m_lock);
-			m_register_p = pop();
-			m_register_pc = pop_word();
 		}
 
 		void 
@@ -630,6 +719,7 @@ namespace NES {
 
 			if(!CPU_FLAG_CHECK(m_register_p, CPU_FLAG_INTERRUPT_ENABLED)) {
 				interrupt(CPU_INTERRUPT_IRQ_ADDRESS);
+				m_cycles += CPU_INTERRUPT_CYCLES;
 			}
 		}
 
@@ -674,6 +764,7 @@ namespace NES {
 			}
 
 			interrupt(CPU_INTERRUPT_NMI_ADDRESS);
+			m_cycles += CPU_INTERRUPT_CYCLES;
 		}
 
 		uint8_t 
@@ -722,6 +813,21 @@ namespace NES {
 
 			clear();
 			m_register_pc = load_word(CPU_INTERRUPT_RESET_ADDRESS);
+		}
+
+		void 
+		_nes_cpu::return_interrupt(void)
+		{
+			ATOMIC_CALL_RECUR(m_lock);
+			m_register_p = pop();
+			m_register_pc = pop_word();
+		}
+
+		void 
+		_nes_cpu::return_subroutine(void)
+		{
+			ATOMIC_CALL_RECUR(m_lock);
+			m_register_pc = (pop_word() + 1);
 		}
 
 		void 

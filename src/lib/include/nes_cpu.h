@@ -199,8 +199,6 @@ namespace NES {
 					__in_opt bool breakpoint = false
 					);
 
-				void interrupt_return(void);
-
 				uint8_t load(
 					__in uint16_t address
 					);
@@ -220,6 +218,10 @@ namespace NES {
 				void push_word(
 					__in uint16_t value
 					);
+
+				void return_interrupt(void);
+
+				void return_subroutine(void);
 
 				void store(
 					__in uint16_t address,

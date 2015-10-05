@@ -29,6 +29,7 @@ namespace NES {
 		#define CPU_CYCLES_INIT 0
 		#define CPU_FLAG_BREAKPOINT 0x10
 		#define CPU_FLAG_CARRY 0x1
+		#define CPU_FLAG_DECIMAL 0x8
 		#define CPU_FLAG_INTERRUPT_ENABLED 0x4
 		#define CPU_FLAG_NEGATIVE 0x80
 		#define CPU_FLAG_OVERFLOW 0x40
@@ -49,6 +50,13 @@ namespace NES {
 		#define CPU_FLAG_CHECK(_P_, _FLAG_) ((_P_) & (_FLAG_))
 		#define CPU_FLAG_CLEAR(_P_, _FLAG_) ((_P_) &= ~(_FLAG_))
 		#define CPU_FLAG_SET(_P_, _FLAG_) ((_P_) |= (_FLAG_))
+		#define CPU_FLAG_SET_CONDITIONAL(_COND_, _P_, _FLAG_) { \
+			if(_COND_) { \
+				CPU_FLAG_SET(_P_, _FLAG_); \
+			} else { \
+				CPU_FLAG_CLEAR(_P_, _FLAG_); \
+			} \
+			}
 
 		#define NES_CPU_HEADER NES_HEADER "::CPU"
 
@@ -61,6 +69,13 @@ namespace NES {
 		enum {
 			NES_CPU_EXCEPTION_ALLOCATED = 0,
 			NES_CPU_EXCEPTION_EXPECTING_BRANCH_CODE,
+			NES_CPU_EXCEPTION_EXPECTING_BRK_CODE,
+			NES_CPU_EXCEPTION_EXPECTING_FLAG_CODE,
+			NES_CPU_EXCEPTION_EXPECTING_NOP_CODE,
+			NES_CPU_EXCEPTION_EXPECTING_REGISTER_CODE,
+			NES_CPU_EXCEPTION_EXPECTING_RTI_CODE,
+			NES_CPU_EXCEPTION_EXPECTING_RTS_CODE,
+			NES_CPU_EXCEPTION_EXPECTING_STACK_CODE,
 			NES_CPU_EXCEPTION_INITIALIZED,
 			NES_CPU_EXCEPTION_UNINITIALIZED,
 			NES_CPU_EXCEPTION_UNSUPPORTED_CODE,
@@ -71,6 +86,13 @@ namespace NES {
 		static const std::string NES_CPU_EXCEPTION_STR[] = {
 			"Failed to allocate cpu component",
 			"Expecting branch opcode",
+			"Expecting break opcode",
+			"Expecting flag opcode",
+			"Expecting no-op opcode",
+			"Expecting register opcode",
+			"Expecting return-from-interrupt opcode",
+			"Expecting return-from-subroutine opcode",
+			"Expecting stack opcode",
 			"Cpu component is initialized",
 			"Cpu component is uninitialized",
 			"Unsupported opcode",
