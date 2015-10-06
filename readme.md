@@ -12,6 +12,12 @@ Table of Contents
 Changelog
 =========
 
+##Version 0.1.1541
+*Updated:10/4/2015*
+
+* Added command test cases (partial)
+* Fixed interrupt code
+
 ##Version 0.1.1540
 *Updated:10/3/2015*
 

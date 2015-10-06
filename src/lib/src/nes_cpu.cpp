@@ -246,7 +246,7 @@ namespace NES {
 					CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_DECIMAL);
 					break;
 				case CPU_CODE_CLI_IMPLIED:
-					CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
+					CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_INTERRUPT_DISABLED);
 					break;
 				case CPU_CODE_CLV_IMPLIED:
 					CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_OVERFLOW);
@@ -258,7 +258,7 @@ namespace NES {
 					CPU_FLAG_SET(m_register_p, CPU_FLAG_DECIMAL);
 					break;
 				case CPU_CODE_SEI_IMPLIED:
-					CPU_FLAG_SET(m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
+					CPU_FLAG_SET(m_register_p, CPU_FLAG_INTERRUPT_DISABLED);
 					break;
 				default:
 					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_FLAG_CODE,
@@ -691,20 +691,17 @@ namespace NES {
 			__in_opt bool breakpoint
 			)
 		{
-			uint8_t p;
-
 			ATOMIC_CALL_RECUR(m_lock);
-			CPU_FLAG_SET(m_register_p, CPU_FLAG_INTERRUPT_ENABLED);
-			p = m_register_p;
 
 			if(breakpoint) {
-				CPU_FLAG_SET(p, CPU_FLAG_BREAKPOINT);
+				push_word(m_register_pc + 1);
+				push(m_register_p | CPU_FLAG_BREAKPOINT);
 			} else {
-				CPU_FLAG_CLEAR(p, CPU_FLAG_BREAKPOINT);
+				push_word(m_register_pc);
+				push(m_register_p);
 			}
 
-			push_word(m_register_pc);
-			push(p);
+			CPU_FLAG_SET(m_register_p, CPU_FLAG_INTERRUPT_DISABLED);
 			m_register_pc = load_word(address);
 		}
 
@@ -717,7 +714,7 @@ namespace NES {
 				THROW_NES_CPU_EXCEPTION(NES_CPU_EXCEPTION_UNINITIALIZED);
 			}
 
-			if(!CPU_FLAG_CHECK(m_register_p, CPU_FLAG_INTERRUPT_ENABLED)) {
+			if(!CPU_FLAG_CHECK(m_register_p, CPU_FLAG_INTERRUPT_DISABLED)) {
 				interrupt(CPU_INTERRUPT_IRQ_ADDRESS);
 				m_cycles += CPU_INTERRUPT_CYCLES;
 			}

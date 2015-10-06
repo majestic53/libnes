@@ -25,6 +25,16 @@ namespace NES {
 
 	namespace TEST {
 
+		typedef struct _nes_cpu_state {
+			uint8_t a;
+			uint32_t cycles;
+			uint8_t p;
+			uint16_t pc;
+			uint8_t sp;
+			uint8_t x;
+			uint8_t y;
+		} nes_cpu_state, *nes_cpu_state_ptr;
+
 		typedef class _nes_test_cpu {
 
 			public:
@@ -38,6 +48,138 @@ namespace NES {
 					);
 
 				static nes_test_t cycles(
+					__in void *context
+					);
+
+				static nes_test_t execute_bcc(
+					__in void *context
+					);
+
+				static nes_test_t execute_bcs(
+					__in void *context
+					);
+
+				static nes_test_t execute_beq(
+					__in void *context
+					);
+
+				static nes_test_t execute_bmi(
+					__in void *context
+					);
+
+				static nes_test_t execute_bne(
+					__in void *context
+					);
+
+				static nes_test_t execute_bpl(
+					__in void *context
+					);
+
+				static nes_test_t execute_brk(
+					__in void *context
+					);
+
+				static nes_test_t execute_bvc(
+					__in void *context
+					);
+
+				static nes_test_t execute_bvs(
+					__in void *context
+					);
+
+				static nes_test_t execute_clc(
+					__in void *context
+					);
+
+				static nes_test_t execute_cld(
+					__in void *context
+					);
+
+				static nes_test_t execute_cli(
+					__in void *context
+					);
+
+				static nes_test_t execute_clv(
+					__in void *context
+					);
+
+				static nes_test_t execute_dex(
+					__in void *context
+					);
+
+				static nes_test_t execute_dey(
+					__in void *context
+					);
+
+				static nes_test_t execute_inx(
+					__in void *context
+					);
+
+				static nes_test_t execute_iny(
+					__in void *context
+					);
+
+				static nes_test_t execute_nop(
+					__in void *context
+					);
+
+				static nes_test_t execute_pha(
+					__in void *context
+					);
+
+				static nes_test_t execute_php(
+					__in void *context
+					);
+
+				static nes_test_t execute_pla(
+					__in void *context
+					);
+
+				static nes_test_t execute_plp(
+					__in void *context
+					);
+
+				static nes_test_t execute_rti(
+					__in void *context
+					);
+
+				static nes_test_t execute_rts(
+					__in void *context
+					);
+
+				static nes_test_t execute_sec(
+					__in void *context
+					);
+
+				static nes_test_t execute_sed(
+					__in void *context
+					);
+
+				static nes_test_t execute_sei(
+					__in void *context
+					);
+
+				static nes_test_t execute_tax(
+					__in void *context
+					);
+
+				static nes_test_t execute_tay(
+					__in void *context
+					);
+
+				static nes_test_t execute_tsx(
+					__in void *context
+					);
+
+				static nes_test_t execute_txa(
+					__in void *context
+					);
+
+				static nes_test_t execute_txs(
+					__in void *context
+					);
+
+				static nes_test_t execute_tya(
 					__in void *context
 					);
 
@@ -85,7 +227,21 @@ namespace NES {
 
 			protected:
 
+				static nes_test_t cache_state(
+					__in void *context,
+					__inout nes_cpu_state &state
+					);
+
+				static bool compare_state(
+					__in void *context,
+					__in const nes_cpu_state &state
+					);
+
 				static nes_test_t random_state(
+					__in void *context
+					);
+
+				static nes_test_t reset_state(
 					__in void *context
 					);
 
