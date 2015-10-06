@@ -969,6 +969,7 @@ exit:
 					goto exit;
 				}
 
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_NOP_IMPLIED);
 				inst->step();
 				st.cycles += CPU_CODE_NOP_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_NOP_IMPLIED_LENGTH;
@@ -1936,7 +1937,6 @@ exit:
 
 			nes_memory::acquire()->initialize();
 			inst->store_word(CPU_INTERRUPT_RESET_ADDRESS, TEST_CPU_INTERRUPT_VECTOR);
-			inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_NOP_IMPLIED);
 			inst->reset();
 			result = NES_TEST_SUCCESS;
 
