@@ -46,6 +46,7 @@ namespace NES {
 		#define CPU_REGISTER_SP_OFFSET 0x100
 		#define CPU_REGISTER_X_INIT 0
 		#define CPU_REGISTER_Y_INIT 0
+		#define CPU_WORD_LENGTH 2
 
 		#define CPU_FLAG_CHECK(_P_, _FLAG_) ((_P_) & (_FLAG_))
 		#define CPU_FLAG_CLEAR(_P_, _FLAG_) ((_P_) &= ~(_FLAG_))
@@ -71,6 +72,7 @@ namespace NES {
 			NES_CPU_EXCEPTION_EXPECTING_BRANCH_CODE,
 			NES_CPU_EXCEPTION_EXPECTING_BRK_CODE,
 			NES_CPU_EXCEPTION_EXPECTING_FLAG_CODE,
+			NES_CPU_EXCEPTION_EXPECTING_LDA_CODE,
 			NES_CPU_EXCEPTION_EXPECTING_NOP_CODE,
 			NES_CPU_EXCEPTION_EXPECTING_REGISTER_CODE,
 			NES_CPU_EXCEPTION_EXPECTING_RTI_CODE,
@@ -78,6 +80,7 @@ namespace NES {
 			NES_CPU_EXCEPTION_EXPECTING_STACK_CODE,
 			NES_CPU_EXCEPTION_INITIALIZED,
 			NES_CPU_EXCEPTION_UNINITIALIZED,
+			NES_CPU_EXCEPTION_UNKNOWN_MODE,
 			NES_CPU_EXCEPTION_UNSUPPORTED_CODE,
 		};
 
@@ -88,6 +91,7 @@ namespace NES {
 			"Expecting branch opcode",
 			"Expecting break opcode",
 			"Expecting flag opcode",
+			"Expecting load-accumulator opcode"
 			"Expecting no-op opcode",
 			"Expecting register opcode",
 			"Expecting return-from-interrupt opcode",
@@ -95,6 +99,7 @@ namespace NES {
 			"Expecting stack opcode",
 			"Cpu component is initialized",
 			"Cpu component is uninitialized",
+			"Unknown addressing mode",
 			"Unsupported opcode",
 			};
 

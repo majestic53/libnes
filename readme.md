@@ -13,6 +13,11 @@ Changelog
 =========
 
 ##Version 0.1.1541
+*Updated:10/6/2015*
+
+* Added support for all addressing modes
+* Added additional commands
+
 *Updated:10/4/2015*
 
 * Added command test cases (partial)

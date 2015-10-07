@@ -203,6 +203,11 @@ namespace NES {
 					__in uint16_t address
 					);
 
+				uint16_t load_operand(
+					__in cpu_mode_t mode,
+					__out bool boundary
+					);
+
 				uint16_t load_word(
 					__in uint16_t address
 					);

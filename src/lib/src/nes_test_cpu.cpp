@@ -52,6 +52,7 @@ namespace NES {
 			NES_TEST_CPU_EXECUTE_DEY,
 			NES_TEST_CPU_EXECUTE_INX,
 			NES_TEST_CPU_EXECUTE_INY,
+			NES_TEST_CPU_EXECUTE_LDA,
 			NES_TEST_CPU_EXECUTE_NOP,
 			NES_TEST_CPU_EXECUTE_PHA,
 			NES_TEST_CPU_EXECUTE_PHP,
@@ -101,6 +102,7 @@ namespace NES {
 			NES_CPU_HEADER "::DEY",
 			NES_CPU_HEADER "::INX",
 			NES_CPU_HEADER "::INY",
+			NES_CPU_HEADER "::LDA",
 			NES_CPU_HEADER "::NOP",
 			NES_CPU_HEADER "::PHA",
 			NES_CPU_HEADER "::PHP",
@@ -152,6 +154,7 @@ namespace NES {
 			nes_test_cpu::execute_dey,
 			nes_test_cpu::execute_inx,
 			nes_test_cpu::execute_iny,
+			nes_test_cpu::execute_lda,
 			nes_test_cpu::execute_nop,
 			nes_test_cpu::execute_pha,
 			nes_test_cpu::execute_php,
@@ -905,6 +908,38 @@ exit:
 
 		nes_test_t 
 		_nes_test_cpu::execute_iny(
+			__in void *context
+			)
+		{
+			nes_cpu_ptr inst = NULL;
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_cpu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_cpu::execute_lda(
 			__in void *context
 			)
 		{

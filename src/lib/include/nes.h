@@ -28,6 +28,7 @@
 
 #include "nes_defines.h"
 #include "nes_exception.h"
+#include "nes_cpu_code.h"
 
 using namespace NES;
 

@@ -119,6 +119,10 @@ namespace NES {
 					__in void *context
 					);
 
+				static nes_test_t execute_lda(
+					__in void *context
+					);
+
 				static nes_test_t execute_nop(
 					__in void *context
 					);
