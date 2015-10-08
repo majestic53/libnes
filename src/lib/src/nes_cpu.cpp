@@ -185,8 +185,9 @@ namespace NES {
 						"0x%x", code);
 			}
 
+			offset = load_operand(CPU_MODE_RELATIVE, boundary);
+
 			if(branch) {
-				offset = load_operand(CPU_MODE_RELATIVE, boundary);
 				m_register_pc += offset;
 
 				if(boundary) {
@@ -439,6 +440,10 @@ namespace NES {
 					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_LDA_CODE,
 						"0x%x", code);
 			}
+
+			CPU_FLAG_SET_CONDITIONAL(m_register_a & CPU_FLAG_NEGATIVE, m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!m_register_a, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 
@@ -792,7 +797,7 @@ namespace NES {
 		uint16_t 
 		_nes_cpu::load_operand(
 			__in cpu_mode_t mode,
-			__out bool boundary
+			__out bool &boundary
 			)
 		{			
 			uint8_t high, low;
@@ -837,7 +842,7 @@ namespace NES {
 				case CPU_MODE_ZERO_PAGE:
 					break;
 				case CPU_MODE_RELATIVE:
-					boundary = (((m_register_pc & UINT8_MAX) + (int8_t) result) > UINT8_MAX);
+					boundary = (((m_register_pc & UINT8_MAX) + result) >= UINT8_MAX);
 					break;
 				case CPU_MODE_ABSOLUTE_X:
 					boundary = (((result & UINT8_MAX) + m_register_x) > UINT8_MAX);
@@ -1125,7 +1130,7 @@ namespace NES {
 					execute_lsr(code);
 					break;
 				case CPU_CODE_NOP_IMPLIED:
-					++m_cycles;
+					execute_nop(code);
 					break;
 				case CPU_CODE_ORA_ABSOLUTE:
 				case CPU_CODE_ORA_ABSOLUTE_X:

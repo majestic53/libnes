@@ -205,7 +205,7 @@ namespace NES {
 
 				uint16_t load_operand(
 					__in cpu_mode_t mode,
-					__out bool boundary
+					__out bool &boundary
 					);
 
 				uint16_t load_word(
