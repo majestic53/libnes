@@ -205,13 +205,30 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
+			uint8_t value = 0;
+			bool boundary = false;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_BIT_ABSOLUTE:
+					value = (m_register_a & load_operand(CPU_MODE_ABSOLUTE, boundary));
+					m_cycles += CPU_CODE_BIT_ABSOLUTE_CYCLES;
+					break;
+				case  CPU_CODE_BIT_ZERO_PAGE:
+					value = (m_register_a & load_operand(CPU_MODE_ZERO_PAGE, boundary));
+					m_cycles += CPU_CODE_BIT_ZERO_PAGE_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_BIT_CODE,
+						"0x%x", code);
+			}
 
-			m_cycles += cycles;
+			CPU_FLAG_SET_CONDITIONAL(value & CPU_FLAG_NEGATIVE, m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(value & CPU_FLAG_OVERFLOW, m_register_p, 
+				CPU_FLAG_OVERFLOW);
+			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 
@@ -390,11 +407,11 @@ namespace NES {
 
 			switch(code) {
 				case CPU_CODE_LDA_ABSOLUTE:
-					m_register_a = load(load_operand(CPU_MODE_ABSOLUTE, boundary));
+					m_register_a = load_operand(CPU_MODE_ABSOLUTE, boundary);
 					m_cycles += CPU_CODE_LDA_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_LDA_ABSOLUTE_X:
-					m_register_a = load(load_operand(CPU_MODE_ABSOLUTE_X, boundary));
+					m_register_a = load_operand(CPU_MODE_ABSOLUTE_X, boundary);
 
 					if(boundary) {
 						++m_cycles;
@@ -403,7 +420,7 @@ namespace NES {
 					m_cycles += CPU_CODE_LDA_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_LDA_ABSOLUTE_Y:
-					m_register_a = load(load_operand(CPU_MODE_ABSOLUTE_Y, boundary));
+					m_register_a = load_operand(CPU_MODE_ABSOLUTE_Y, boundary);
 
 					if(boundary) {
 						++m_cycles;
@@ -416,11 +433,11 @@ namespace NES {
 					m_cycles += CPU_CODE_LDA_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_LDA_INDIRECT_X:
-					m_register_a = load(load_operand(CPU_MODE_INDIRECT_X, boundary));
+					m_register_a = load_operand(CPU_MODE_INDIRECT_X, boundary);
 					m_cycles += CPU_CODE_LDA_INDIRECT_X_CYCLES;
 					break;
 				case CPU_CODE_LDA_INDIRECT_Y:
-					m_register_a = load(load_operand(CPU_MODE_INDIRECT_Y, boundary));
+					m_register_a = load_operand(CPU_MODE_INDIRECT_Y, boundary);
 
 					if(boundary) {
 						++m_cycles;
@@ -429,11 +446,11 @@ namespace NES {
 					m_cycles += CPU_CODE_LDA_INDIRECT_Y_CYCLES;
 					break;
 				case CPU_CODE_LDA_ZERO_PAGE:
-					m_register_a = load(load_operand(CPU_MODE_ZERO_PAGE, boundary));
+					m_register_a = load_operand(CPU_MODE_ZERO_PAGE, boundary);
 					m_cycles += CPU_CODE_LDA_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_LDA_ZERO_PAGE_X:
-					m_register_a = load(load_operand(CPU_MODE_ZERO_PAGE_X, boundary));
+					m_register_a = load_operand(CPU_MODE_ZERO_PAGE_X, boundary);
 					m_cycles += CPU_CODE_LDA_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -813,70 +830,63 @@ namespace NES {
 				case CPU_MODE_ABSOLUTE_Y:
 					result = load_word(m_register_pc);
 					m_register_pc += CPU_WORD_LENGTH;
+
+					if(mode == CPU_MODE_ABSOLUTE_X) {
+						boundary = (((result & UINT8_MAX) + m_register_x) > UINT8_MAX);
+						result += m_register_x;
+						result &= UINT16_MAX;
+					} else if(mode == CPU_MODE_ABSOLUTE_Y) {
+						boundary = (((result & UINT8_MAX) + m_register_y) > UINT8_MAX);
+						result += m_register_y;
+						result &= UINT16_MAX;
+					}
+
+					result = load(result);					
 					break;
 				case CPU_MODE_ACCUMULATOR:
 					result = m_register_a;
 					break;
 				case CPU_MODE_IMMEDIATE:
+				case CPU_MODE_RELATIVE:
+					result = load(m_register_pc++);
+
+					if(mode == CPU_MODE_RELATIVE) {
+						boundary = (((m_register_pc & UINT8_MAX) + result) >= UINT8_MAX);
+					}
+					break;
 				case CPU_MODE_INDIRECT:
 				case CPU_MODE_INDIRECT_X:
 				case CPU_MODE_INDIRECT_Y:
-				case CPU_MODE_RELATIVE:
+					result = load_word(m_register_pc);
+					m_register_pc += CPU_WORD_LENGTH;
+
+					if(mode == CPU_MODE_INDIRECT) {
+						result = load_word(result);
+					} else if(mode == CPU_MODE_INDIRECT_X) {
+						result = load_word(result + m_register_x);
+					} else if(mode == CPU_MODE_INDIRECT_Y) {
+						low = load(result);
+						boundary = ((low + m_register_y) > UINT8_MAX);
+						high = (load((result + 1) & UINT8_MAX) << BITS_PER_BYTE);
+						result = load_word(((high | low) + m_register_y) & UINT16_MAX);
+					}
+					break;
+				case CPU_MODE_IMPLIED:
+					break;
 				case CPU_MODE_ZERO_PAGE:
 				case CPU_MODE_ZERO_PAGE_X:
 				case CPU_MODE_ZERO_PAGE_Y:
 					result = load(m_register_pc++);
-					break;
-				case CPU_MODE_IMPLIED:
-					break;
-				default:
-					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_UNKNOWN_MODE,
-						"mode. 0x%x", mode);
-			}
 
-			switch(mode) {
-				case CPU_MODE_ABSOLUTE:
-				case CPU_MODE_ACCUMULATOR:
-				case CPU_MODE_IMMEDIATE:
-				case CPU_MODE_IMPLIED:
-				case CPU_MODE_ZERO_PAGE:
-					break;
-				case CPU_MODE_RELATIVE:
-					boundary = (((m_register_pc & UINT8_MAX) + result) >= UINT8_MAX);
-					break;
-				case CPU_MODE_ABSOLUTE_X:
-					boundary = (((result & UINT8_MAX) + m_register_x) > UINT8_MAX);
-					result += m_register_x;
-					result &= UINT16_MAX;
-					break;
-				case CPU_MODE_ABSOLUTE_Y:
-					boundary = (((result & UINT8_MAX) + m_register_y) > UINT8_MAX);
-					result += m_register_y;
-					result &= UINT16_MAX;
-					break;
-				case CPU_MODE_INDIRECT:
-					low = load(result);
-					high = (load((result + 1) & UINT8_MAX) << BITS_PER_BYTE);
-					result = (high | low);
-					break;
-				case CPU_MODE_INDIRECT_X:
-					low = load((result + m_register_x) & UINT8_MAX);
-					high = (load((result + m_register_x + 1) & UINT8_MAX) << BITS_PER_BYTE);
-					result = (high | low);
-					break;
-				case CPU_MODE_INDIRECT_Y:
-					low = load(result);
-					boundary = ((low + m_register_y) > UINT8_MAX);
-					high = (load((result + 1) & UINT8_MAX) << BITS_PER_BYTE);
-					result = (((high | low) + m_register_y) & UINT16_MAX);
-					break;
-				case CPU_MODE_ZERO_PAGE_X:
-					result += m_register_x;
-					result &= UINT8_MAX;
-					break;
-				case CPU_MODE_ZERO_PAGE_Y:
-					result += m_register_y;
-					result &= UINT8_MAX;
+					if(mode == CPU_MODE_ZERO_PAGE_X) {
+						result += m_register_x;
+						result &= UINT8_MAX;
+					} else if(mode == CPU_MODE_ZERO_PAGE_Y) {
+						result += m_register_y;
+						result &= UINT8_MAX;
+					}
+
+					result = load(result);
 					break;
 				default:
 					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_UNKNOWN_MODE,

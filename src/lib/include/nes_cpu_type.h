@@ -69,6 +69,7 @@ namespace NES {
 
 		enum {
 			NES_CPU_EXCEPTION_ALLOCATED = 0,
+			NES_CPU_EXCEPTION_EXPECTING_BIT_CODE,
 			NES_CPU_EXCEPTION_EXPECTING_BRANCH_CODE,
 			NES_CPU_EXCEPTION_EXPECTING_BRK_CODE,
 			NES_CPU_EXCEPTION_EXPECTING_FLAG_CODE,
@@ -88,10 +89,11 @@ namespace NES {
 
 		static const std::string NES_CPU_EXCEPTION_STR[] = {
 			"Failed to allocate cpu component",
+			"Expecting bit opcode",
 			"Expecting branch opcode",
 			"Expecting break opcode",
 			"Expecting flag opcode",
-			"Expecting load-accumulator opcode"
+			"Expecting load-accumulator opcode",
 			"Expecting no-op opcode",
 			"Expecting register opcode",
 			"Expecting return-from-interrupt opcode",

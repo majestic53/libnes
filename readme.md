@@ -13,6 +13,11 @@ Changelog
 =========
 
 ##Version 0.1.1541
+*Updated:10/8/2015*
+
+* Fixed addressing modes
+* Added additional test cases
+
 *Updated:10/7/2015*
 
 * Added additional test cases

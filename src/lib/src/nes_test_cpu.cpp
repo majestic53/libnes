@@ -31,7 +31,13 @@ namespace NES {
 		#define TEST_CPU_ADDRESS 0x3344
 		#define TEST_CPU_ADDRESS_RELATIVE_ADD 0x10
 		#define TEST_CPU_ADDRESS_RELATIVE_SUB 0xa5
-		#define TEST_CPU_INTERRUPT_VECTOR 0xabcd		
+		#define TEST_CPU_CODE_INVALID 0x3a
+		#define TEST_CPU_INTERRUPT_VECTOR 0xabcd
+		#define TEST_CPU_REGISTER_INIT 0x3d
+		#define TEST_CPU_REGISTER_INIT_HIGH 0x7f
+		#define TEST_CPU_REGISTER_INIT_MAX 0xff
+		#define TEST_CPU_REGISTER_INIT_ONE 1
+		#define TEST_CPU_REGISTER_INIT_ZERO 0
 		#define TEST_CPU_SP_INTERRUPT_OFFSET 3
 
 		enum {
@@ -1595,7 +1601,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_CLC_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -1622,7 +1627,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_CLC_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -1680,7 +1684,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_CLD_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -1707,7 +1710,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_CLD_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -1765,7 +1767,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_CLI_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -1792,7 +1793,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_CLI_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -1850,7 +1850,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_CLV_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -1877,7 +1876,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_CLV_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -1904,6 +1902,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -1917,8 +1916,91 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->m_register_x = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_DEX_IMPLIED);
+				inst->step();
+				--st.x;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->m_register_x = TEST_CPU_REGISTER_INIT_ONE;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_DEX_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_ZERO);
+				--st.x;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->m_register_x = TEST_CPU_REGISTER_INIT_ZERO;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_DEX_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_NEGATIVE);
+				--st.x;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -1936,6 +2018,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -1949,8 +2032,91 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->m_register_y = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_DEY_IMPLIED);
+				inst->step();
+				--st.y;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->m_register_y = TEST_CPU_REGISTER_INIT_ONE;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_DEY_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_ZERO);
+				--st.y;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->m_register_y = TEST_CPU_REGISTER_INIT_ZERO;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_DEY_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_NEGATIVE);
+				--st.y;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -1968,6 +2134,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -1981,8 +2148,94 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_x = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				CPU_FLAG_SET(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_INX_IMPLIED);
+				inst->step();
+				++st.x;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_x = TEST_CPU_REGISTER_INIT_HIGH;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_ZERO);
+				CPU_FLAG_SET(st.p, CPU_FLAG_NEGATIVE);
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_INX_IMPLIED);
+				inst->step();
+				++st.x;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_x = TEST_CPU_REGISTER_INIT_MAX;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE);
+				CPU_FLAG_SET(st.p, CPU_FLAG_ZERO);
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_INX_IMPLIED);
+				inst->step();
+				++st.x;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2000,6 +2253,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -2013,8 +2267,94 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_y = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				CPU_FLAG_SET(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_INY_IMPLIED);
+				inst->step();
+				++st.y;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_y = TEST_CPU_REGISTER_INIT_HIGH;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_ZERO);
+				CPU_FLAG_SET(st.p, CPU_FLAG_NEGATIVE);
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_INY_IMPLIED);
+				inst->step();
+				++st.y;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_y = TEST_CPU_REGISTER_INIT_MAX;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE);
+				CPU_FLAG_SET(st.p, CPU_FLAG_ZERO);
+				CPU_FLAG_CLEAR(inst->m_register_p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_INY_IMPLIED);
+				inst->step();
+				++st.y;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2118,6 +2458,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -2131,8 +2472,38 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_a = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_PHA_IMPLIED);
+				inst->step();
+				--st.sp;
+				st.cycles += CPU_CODE_PHA_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				if(inst->load(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 1) 
+						!= TEST_CPU_REGISTER_INIT) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2150,6 +2521,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -2163,8 +2535,38 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_p = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_PHP_IMPLIED);
+				inst->step();
+				--st.sp;
+				st.cycles += CPU_CODE_PHP_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				if(inst->load(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 1) 
+						!= TEST_CPU_REGISTER_INIT) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2182,6 +2584,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -2195,8 +2598,103 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_a = 0;
+				inst->store(inst->m_register_sp + CPU_REGISTER_SP_OFFSET,
+					TEST_CPU_REGISTER_INIT);
+				--inst->m_register_sp;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_PLA_IMPLIED);
+				inst->step();
+				++st.sp;
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				st.a = TEST_CPU_REGISTER_INIT;
+				st.cycles += CPU_CODE_PLA_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_a = TEST_CPU_REGISTER_INIT;
+				inst->store(inst->m_register_sp + CPU_REGISTER_SP_OFFSET,
+					TEST_CPU_REGISTER_INIT_ZERO);
+				--inst->m_register_sp;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_PLA_IMPLIED);
+				inst->step();
+				++st.sp;
+				CPU_FLAG_SET(st.p, CPU_FLAG_ZERO);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE);
+				st.a = TEST_CPU_REGISTER_INIT_ZERO;
+				st.cycles += CPU_CODE_PLA_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_a = TEST_CPU_REGISTER_INIT;
+				inst->store(inst->m_register_sp + CPU_REGISTER_SP_OFFSET,
+					TEST_CPU_REGISTER_INIT_MAX);
+				--inst->m_register_sp;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_PLA_IMPLIED);
+				inst->step();
+				++st.sp;
+				CPU_FLAG_SET(st.p, CPU_FLAG_NEGATIVE);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_ZERO);
+				st.a = TEST_CPU_REGISTER_INIT_MAX;
+				st.cycles += CPU_CODE_PLA_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2214,6 +2712,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -2227,8 +2726,98 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_p = 0;
+				inst->store(inst->m_register_sp + CPU_REGISTER_SP_OFFSET,
+					TEST_CPU_REGISTER_INIT);
+				--inst->m_register_sp;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_PLP_IMPLIED);
+				inst->step();
+				++st.sp;
+				st.p = TEST_CPU_REGISTER_INIT;
+				st.cycles += CPU_CODE_PLP_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_p = TEST_CPU_REGISTER_INIT;
+				inst->store(inst->m_register_sp + CPU_REGISTER_SP_OFFSET,
+					TEST_CPU_REGISTER_INIT_ZERO);
+				--inst->m_register_sp;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_PLP_IMPLIED);
+				inst->step();
+				++st.sp;
+				st.p = TEST_CPU_REGISTER_INIT_ZERO;
+				st.cycles += CPU_CODE_PLP_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_p = TEST_CPU_REGISTER_INIT;
+				inst->store(inst->m_register_sp + CPU_REGISTER_SP_OFFSET,
+					TEST_CPU_REGISTER_INIT_MAX);
+				--inst->m_register_sp;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_PLP_IMPLIED);
+				inst->step();
+				++st.sp;
+				st.p = TEST_CPU_REGISTER_INIT_MAX;
+				st.cycles += CPU_CODE_PLP_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2341,7 +2930,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_SEC_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -2368,7 +2956,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_SEC_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -2426,7 +3013,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_SED_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -2453,7 +3039,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_SED_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -2511,7 +3096,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_SEI_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -2538,7 +3122,6 @@ exit:
 				}
 
 				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_SEI_IMPLIED);
-				inst->store(TEST_CPU_INTERRUPT_VECTOR + 1, TEST_CPU_ADDRESS_RELATIVE_SUB);
 				inst->step();
 				st.cycles += CPU_CODE_FLAG_IMPLIED_CYCLES;
 				st.pc += CPU_CODE_FLAG_IMPLIED_LENGTH;
@@ -2565,6 +3148,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -2578,8 +3162,91 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_a = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TAX_IMPLIED);
+				inst->step();
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				st.x = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_a = TEST_CPU_REGISTER_INIT_ZERO;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TAX_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_ZERO);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE);
+				st.x = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_a = TEST_CPU_REGISTER_INIT_MAX;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TAX_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_NEGATIVE);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_ZERO);
+				st.x = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2597,6 +3264,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -2610,8 +3278,91 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_a = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TAY_IMPLIED);
+				inst->step();
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				st.y = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_a = TEST_CPU_REGISTER_INIT_ZERO;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TAY_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_ZERO);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE);
+				st.y = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_a = TEST_CPU_REGISTER_INIT_MAX;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TAY_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_NEGATIVE);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_ZERO);
+				st.y = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2629,6 +3380,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -2642,8 +3394,91 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_sp = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TSX_IMPLIED);
+				inst->step();
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				st.x = inst->m_register_sp;
+				st.cycles += CPU_CODE_TSX_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_sp = TEST_CPU_REGISTER_INIT_ZERO;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TSX_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_ZERO);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE);
+				st.x = inst->m_register_sp;
+				st.cycles += CPU_CODE_TSX_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_sp = TEST_CPU_REGISTER_INIT_MAX;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TSX_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_NEGATIVE);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_ZERO);
+				st.x = inst->m_register_sp;
+				st.cycles += CPU_CODE_TSX_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2661,6 +3496,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -2674,8 +3510,91 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_x = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TXA_IMPLIED);
+				inst->step();
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				st.a = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_x = TEST_CPU_REGISTER_INIT_ZERO;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TXA_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_ZERO);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE);
+				st.a = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_x = TEST_CPU_REGISTER_INIT_MAX;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TXA_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_NEGATIVE);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_ZERO);
+				st.a = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2693,6 +3612,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -2706,8 +3626,86 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_sp = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TXS_IMPLIED);
+				inst->step();
+				st.sp = inst->m_register_x;
+				st.cycles += CPU_CODE_TXS_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_sp = TEST_CPU_REGISTER_INIT_ZERO;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TXS_IMPLIED);
+				inst->step();
+				st.sp = inst->m_register_x;
+				st.cycles += CPU_CODE_TXS_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_sp = TEST_CPU_REGISTER_INIT_MAX;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TXS_IMPLIED);
+				inst->step();
+				st.sp = inst->m_register_x;
+				st.cycles += CPU_CODE_TXS_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_STACK_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2725,6 +3723,7 @@ exit:
 			)
 		{
 			nes_cpu_ptr inst = NULL;
+			nes_cpu_state st = { 0 };
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			if(!context) {
@@ -2738,8 +3737,91 @@ exit:
 
 			try {
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_y = TEST_CPU_REGISTER_INIT;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TYA_IMPLIED);
+				inst->step();
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE | CPU_FLAG_ZERO);
+				st.a = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_y = TEST_CPU_REGISTER_INIT_ZERO;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TYA_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_ZERO);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_NEGATIVE);
+				st.a = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->m_register_y = TEST_CPU_REGISTER_INIT_MAX;
+
+				result = nes_test_cpu::cache_state(inst, st);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, CPU_CODE_TYA_IMPLIED);
+				inst->step();
+				CPU_FLAG_SET(st.p, CPU_FLAG_NEGATIVE);
+				CPU_FLAG_CLEAR(st.p, CPU_FLAG_ZERO);
+				st.a = inst->m_register_a;
+				st.cycles += CPU_CODE_REGISTER_IMPLIED_CYCLES;
+				st.pc += CPU_CODE_REGISTER_IMPLIED_LENGTH;
+
+				if(!nes_test_cpu::compare_state(inst, st)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -3277,8 +4359,22 @@ exit:
 					inst->initialize();
 				}
 
-				// TODO
+				result = nes_test_cpu::reset_state(inst);
+				if(!NES_TEST_SUCCESS(result)) {
+					goto exit;
+				}
 
+				if(inst->m_register_pc != TEST_CPU_INTERRUPT_VECTOR) {
+					goto exit;
+				}
+
+				inst->store(TEST_CPU_INTERRUPT_VECTOR, TEST_CPU_CODE_INVALID);
+
+				try {
+					inst->step();
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
