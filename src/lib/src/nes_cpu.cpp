@@ -816,8 +816,7 @@ namespace NES {
 			__in cpu_mode_t mode,
 			__out bool &boundary
 			)
-		{			
-			uint8_t high, low;
+		{
 			uint16_t result = 0;
 
 			ATOMIC_CALL_RECUR(m_lock);
@@ -857,18 +856,15 @@ namespace NES {
 				case CPU_MODE_INDIRECT:
 				case CPU_MODE_INDIRECT_X:
 				case CPU_MODE_INDIRECT_Y:
-					result = load_word(m_register_pc);
-					m_register_pc += CPU_WORD_LENGTH;
+					result = load(m_register_pc++);
 
 					if(mode == CPU_MODE_INDIRECT) {
-						result = load_word(result);
+						result = load(load_word(result));
 					} else if(mode == CPU_MODE_INDIRECT_X) {
-						result = load_word(result + m_register_x);
+						result = load(load_word(result + m_register_x));
 					} else if(mode == CPU_MODE_INDIRECT_Y) {
-						low = load(result);
-						boundary = ((low + m_register_y) > UINT8_MAX);
-						high = (load((result + 1) & UINT8_MAX) << BITS_PER_BYTE);
-						result = load_word(((high | low) + m_register_y) & UINT16_MAX);
+						boundary = ((load(result) + m_register_y) > UINT8_MAX);
+						result = load(load_word(result));
 					}
 					break;
 				case CPU_MODE_IMPLIED:
