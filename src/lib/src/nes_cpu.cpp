@@ -212,11 +212,11 @@ namespace NES {
 
 			switch(code) {
 				case CPU_CODE_BIT_ABSOLUTE:
-					value = (m_register_a & load_operand(CPU_MODE_ABSOLUTE, boundary));
+					value = (m_register_a & load(load_operand(CPU_MODE_ABSOLUTE, boundary)));
 					m_cycles += CPU_CODE_BIT_ABSOLUTE_CYCLES;
 					break;
 				case  CPU_CODE_BIT_ZERO_PAGE:
-					value = (m_register_a & load_operand(CPU_MODE_ZERO_PAGE, boundary));
+					value = (m_register_a & load(load_operand(CPU_MODE_ZERO_PAGE, boundary)));
 					m_cycles += CPU_CODE_BIT_ZERO_PAGE_CYCLES;
 					break;
 				default:

@@ -63,6 +63,10 @@ namespace NES {
 					__in void *context
 					);
 
+				static nes_test_t execute_bit(
+					__in void *context
+					);
+
 				static nes_test_t execute_bmi(
 					__in void *context
 					);
