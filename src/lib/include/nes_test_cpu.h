@@ -119,6 +119,14 @@ namespace NES {
 					__in void *context
 					);
 
+				static nes_test_t execute_jmp(
+					__in void *context
+					);
+
+				static nes_test_t execute_jsr(
+					__in void *context
+					);
+
 				static nes_test_t execute_lda(
 					__in void *context
 					);

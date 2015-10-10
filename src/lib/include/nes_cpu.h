@@ -199,6 +199,8 @@ namespace NES {
 					__in_opt bool breakpoint = false
 					);
 
+				void interrupt_return(void);
+
 				uint8_t load(
 					__in uint16_t address
 					);
@@ -224,10 +226,6 @@ namespace NES {
 					__in uint16_t value
 					);
 
-				void return_interrupt(void);
-
-				void return_subroutine(void);
-
 				void store(
 					__in uint16_t address,
 					__in uint8_t value
@@ -237,6 +235,12 @@ namespace NES {
 					__in uint16_t address,
 					__in uint16_t value
 					);
+
+				void subroutine(
+					__in uint16_t address
+					);
+
+				void subroutine_return(void);
 
 #ifndef NDEBUG
 				friend class NES::TEST::_nes_test_cpu;
