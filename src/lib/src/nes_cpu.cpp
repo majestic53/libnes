@@ -108,13 +108,77 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
+			bool boundary = false;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_ADC_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_ADC_ABSOLUTE_CYLCES;
+					break;
+				case CPU_CODE_ADC_ABSOLUTE_X:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_ADC_ABSOLUTE_X_CYLCES;
+					break;
+				case CPU_CODE_ADC_ABSOLUTE_Y:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_ADC_ABSOLUTE_Y_CYLCES;
+					break;
+				case CPU_CODE_ADC_IMMEDIATE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ADC_IMMEDIATE_CYLCES;
+					break;
+				case CPU_CODE_ADC_INDIRECT_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ADC_INDIRECT_X_CYLCES;
+					break;
+				case CPU_CODE_ADC_INDIRECT_Y:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_ADC_INDIRECT_Y_CYLCES;
+					break;
+				case CPU_CODE_ADC_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ADC_ZERO_PAGE_CYLCES;
+					break;
+				case CPU_CODE_ADC_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ADC_ZERO_PAGE_X_CYLCES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_ADC_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -122,13 +186,79 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
+			bool boundary = false;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_AND_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_AND_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_AND_ABSOLUTE_X:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_AND_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_AND_ABSOLUTE_Y:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_AND_ABSOLUTE_Y_CYCLES;
+					break;
+				case CPU_CODE_AND_IMMEDIATE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_AND_IMMEDIATE_CYCLES;
+					break;
+				case CPU_CODE_AND_INDIRECT_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_AND_INDIRECT_X_CYCLES;
+					break;
+				case CPU_CODE_AND_INDIRECT_Y:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_AND_INDIRECT_Y_CYCLES;
+					break;
+				case CPU_CODE_AND_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_AND_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_AND_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_AND_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_AND_CODE,
+						"0x%x", code);
+			}
+
+			CPU_FLAG_SET_CONDITIONAL(m_register_a & CPU_FLAG_NEGATIVE, m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!m_register_a, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 
@@ -136,13 +266,45 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_ASL_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_ASL_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_ASL_ABSOLUTE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ASL_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_ASL_ACCUMULATOR:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ASL_ACCUMULATOR_CYCLES;
+					break;
+				case CPU_CODE_ASL_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ASL_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_ASL_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ASL_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_ASL_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -289,13 +451,77 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
+			bool boundary = false;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_CMP_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_CMP_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_CMP_ABSOLUTE_X:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_CMP_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_CMP_ABSOLUTE_Y:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_CMP_ABSOLUTE_Y_CYCLES;
+					break;
+				case CPU_CODE_CMP_IMMEDIATE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_CMP_IMMEDIATE_CYCLES;
+					break;
+				case CPU_CODE_CMP_INDIRECT_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_CMP_INDIRECT_X_CYCLES;
+					break;
+				case CPU_CODE_CMP_INDIRECT_Y:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_CMP_INDIRECT_Y_CYCLES;
+					break;
+				case CPU_CODE_CMP_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_CMP_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_CMP_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_CMP_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_CMP_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -303,13 +529,33 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_CPX_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_CPX_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_CPX_IMMEDIATE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_CPX_IMMEDIATE_CYCLES;
+					break;
+				case CPU_CODE_CPX_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_CPX_ZERO_PAGE_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_CPX_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -317,13 +563,33 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_CPY_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_CPY_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_CPY_IMMEDIATE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_CPY_IMMEDIATE_CYCLES;
+					break;
+				case CPU_CODE_CPY_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_CPY_ZERO_PAGE_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_CPY_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -331,13 +597,39 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_DEC_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_DEC_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_DEC_ABSOLUTE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_DEC_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_DEC_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_DEC_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_DEC_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_DEC_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_DEC_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -345,13 +637,77 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
+			bool boundary = false;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_EOR_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_EOR_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_EOR_ABSOLUTE_X:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_EOR_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_EOR_ABSOLUTE_Y:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_EOR_ABSOLUTE_Y_CYCLES;
+					break;
+				case CPU_CODE_EOR_IMMEDIATE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_EOR_IMMEDIATE_CYCLES;
+					break;
+				case CPU_CODE_EOR_INDIRECT_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_EOR_INDIRECT_X_CYCLES;
+					break;
+				case CPU_CODE_EOR_INDIRECT_Y:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_EOR_INDIRECT_Y_CYCLES;
+					break;
+				case CPU_CODE_EOR_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_EOR_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_EOR_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_EOR_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_EOR_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -359,13 +715,39 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_INC_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_INC_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_INC_ABSOLUTE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_INC_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_INC_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_INC_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_INC_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_INC_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_INC_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -482,13 +864,44 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
+			bool boundary = false;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_LDX_ABSOLUTE:
+					m_register_x = load(load_operand(CPU_MODE_ABSOLUTE, boundary));
+					m_cycles += CPU_CODE_LDX_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_LDX_ABSOLUTE_Y:
+					m_register_x = load(load_operand(CPU_MODE_ABSOLUTE_Y, boundary));
 
-			m_cycles += cycles;
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_LDX_ABSOLUTE_Y_CYCLES;
+					break;
+				case CPU_CODE_LDX_IMMEDIATE:
+					m_register_x = load_operand(CPU_MODE_IMMEDIATE, boundary);
+					m_cycles += CPU_CODE_LDX_IMMEDIATE_CYCLES;
+					break;
+				case CPU_CODE_LDX_ZERO_PAGE:
+					m_register_x = load(load_operand(CPU_MODE_ZERO_PAGE, boundary));
+					m_cycles += CPU_CODE_LDX_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_LDX_ZERO_PAGE_Y:
+					m_register_x = load(load_operand(CPU_MODE_ZERO_PAGE_Y, boundary));
+					m_cycles += CPU_CODE_LDX_ZERO_PAGE_Y_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_LDX_CODE,
+						"0x%x", code);
+			}
+
+			CPU_FLAG_SET_CONDITIONAL(m_register_x & CPU_FLAG_NEGATIVE, m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!m_register_x, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 
@@ -496,13 +909,44 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
+			bool boundary = false;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_LDY_ABSOLUTE:
+					m_register_y = load(load_operand(CPU_MODE_ABSOLUTE, boundary));
+					m_cycles += CPU_CODE_LDY_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_LDY_ABSOLUTE_X:
+					m_register_y = load(load_operand(CPU_MODE_ABSOLUTE_X, boundary));
 
-			m_cycles += cycles;
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_LDY_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_LDY_IMMEDIATE:
+					m_register_y = load_operand(CPU_MODE_IMMEDIATE, boundary);
+					m_cycles += CPU_CODE_LDY_IMMEDIATE_CYCLES;
+					break;
+				case CPU_CODE_LDY_ZERO_PAGE:
+					m_register_y = load(load_operand(CPU_MODE_ZERO_PAGE, boundary));
+					m_cycles += CPU_CODE_LDY_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_LDY_ZERO_PAGE_X:
+					m_register_y = load(load_operand(CPU_MODE_ZERO_PAGE_X, boundary));
+					m_cycles += CPU_CODE_LDY_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_LDY_CODE,
+						"0x%x", code);
+			}
+
+			CPU_FLAG_SET_CONDITIONAL(m_register_y & CPU_FLAG_NEGATIVE, m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!m_register_y, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 
@@ -510,13 +954,45 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_LSR_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_LSR_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_LSR_ABSOLUTE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_LSR_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_LSR_ACCUMULATOR:
+
+					// TODO
+
+					m_cycles += CPU_CODE_LSR_ACCUMULATOR_CYCLES;
+					break;
+				case CPU_CODE_LSR_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_LSR_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_LSR_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_LSR_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_LSR_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -539,13 +1015,77 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
+			bool boundary = false;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_ORA_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_ORA_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_ORA_ABSOLUTE_X:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_ORA_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_ORA_ABSOLUTE_Y:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_ORA_ABSOLUTE_Y_CYCLES;
+					break;
+				case CPU_CODE_ORA_IMMEDIATE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ORA_IMMEDIATE_CYCLES;
+					break;
+				case CPU_CODE_ORA_INDIRECT_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ORA_INDIRECT_X_CYCLES;
+					break;
+				case CPU_CODE_ORA_INDIRECT_Y:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ORA_INDIRECT_Y_CYCLES;
+					break;
+				case CPU_CODE_ORA_ZERO_PAGE:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_ORA_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_ORA_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ORA_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_ORA_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -596,13 +1136,45 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_ROL_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_ROL_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_ROL_ABSOLUTE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ROL_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_ROL_ACCUMULATOR:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ROL_ACCUMULATOR_CYCLES;
+					break;
+				case CPU_CODE_ROL_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ROL_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_ROL_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ROL_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_ROL_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -610,13 +1182,45 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_ROR_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_ROR_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_ROR_ABSOLUTE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ROR_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_ROR_ACCUMULATOR:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ROR_ACCUMULATOR_CYCLES;
+					break;
+				case CPU_CODE_ROR_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ROR_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_ROR_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_ROR_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_ROR_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -656,13 +1260,77 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
+			bool boundary = false;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_SBC_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_SBC_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_SBC_ABSOLUTE_X:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_SBC_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_SBC_ABSOLUTE_Y:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_SBC_ABSOLUTE_Y_CYCLES;
+					break;
+				case CPU_CODE_SBC_IMMEDIATE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_SBC_IMMEDIATE_CYCLES;
+					break;
+				case CPU_CODE_SBC_INDIRECT_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_SBC_INDIRECT_X_CYCLES;
+					break;
+				case CPU_CODE_SBC_INDIRECT_Y:
+
+					// TODO
+
+					if(boundary) {
+						++m_cycles;
+					}
+
+					m_cycles += CPU_CODE_SBC_INDIRECT_Y_CYCLES;
+					break;
+				case CPU_CODE_SBC_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_SBC_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_SBC_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_SBC_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_SBC_CODE,
+						"0x%x", code);
+			}
+
+			// TODO: set flags
 		}
 
 		void 
@@ -670,13 +1338,55 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_STA_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_STA_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_STA_ABSOLUTE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_STA_ABSOLUTE_X_CYCLES;
+					break;
+				case CPU_CODE_STA_ABSOLUTE_Y:
+
+					// TODO
+
+					m_cycles += CPU_CODE_STA_ABSOLUTE_Y_CYCLES;
+					break;
+				case CPU_CODE_STA_INDIRECT_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_STA_INDIRECT_X_CYCLES;
+					break;
+				case CPU_CODE_STA_INDIRECT_Y:
+
+					// TODO
+
+					m_cycles += CPU_CODE_STA_INDIRECT_Y_CYCLES;
+					break;
+				case CPU_CODE_STA_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_STA_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_STA_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_STA_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_STA_CODE,
+						"0x%x", code);
+			}
 		}
 
 		void 
@@ -732,13 +1442,31 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_STX_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_STX_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_STX_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_STX_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_STX_ZERO_PAGE_Y:
+
+					// TODO
+
+					m_cycles += CPU_CODE_STX_ZERO_PAGE_Y_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_STX_CODE,
+						"0x%x", code);
+			}
 		}
 
 		void 
@@ -746,13 +1474,31 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
-			size_t cycles = 0;
-
 			ATOMIC_CALL_RECUR(m_lock);
 
-			// TODO
+			switch(code) {
+				case CPU_CODE_STY_ABSOLUTE:
 
-			m_cycles += cycles;
+					// TODO
+
+					m_cycles += CPU_CODE_STY_ABSOLUTE_CYCLES;
+					break;
+				case CPU_CODE_STY_ZERO_PAGE:
+
+					// TODO
+
+					m_cycles += CPU_CODE_STY_ZERO_PAGE_CYCLES;
+					break;
+				case CPU_CODE_STY_ZERO_PAGE_X:
+
+					// TODO
+
+					m_cycles += CPU_CODE_STY_ZERO_PAGE_X_CYCLES;
+					break;
+				default:
+					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_STY_CODE,
+						"0x%x", code);
+			}
 		}
 
 		void 

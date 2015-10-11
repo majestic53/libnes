@@ -13,6 +13,10 @@ Changelog
 =========
 
 ##Version 0.1.1541
+*Updated:10/11/2015*
+
+* Added additional commands
+
 *Updated:10/10/2015*
 
 * Added jump commands/test cases
