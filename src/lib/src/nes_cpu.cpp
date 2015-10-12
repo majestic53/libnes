@@ -1643,7 +1643,7 @@ namespace NES {
 						result = load_word(result + m_register_x);
 					} else if(mode == CPU_MODE_INDIRECT_Y) {
 						boundary = ((load(result) + m_register_y) > UINT8_MAX);
-						result = load_word(result);
+						result = (load_word(result) + m_register_y);
 					}
 					break;
 				case CPU_MODE_IMPLIED:
