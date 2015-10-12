@@ -347,7 +347,7 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			offset = load_operand(CPU_MODE_RELATIVE, boundary);
+			offset = operand(CPU_MODE_RELATIVE, boundary);
 
 			if(branch) {
 				m_register_pc += offset;
@@ -374,11 +374,11 @@ namespace NES {
 
 			switch(code) {
 				case CPU_CODE_BIT_ABSOLUTE:
-					value = (m_register_a & load(load_operand(CPU_MODE_ABSOLUTE, boundary)));
+					value = (m_register_a & load(operand(CPU_MODE_ABSOLUTE, boundary)));
 					m_cycles += CPU_CODE_BIT_ABSOLUTE_CYCLES;
 					break;
 				case  CPU_CODE_BIT_ZERO_PAGE:
-					value = (m_register_a & load(load_operand(CPU_MODE_ZERO_PAGE, boundary)));
+					value = (m_register_a & load(operand(CPU_MODE_ZERO_PAGE, boundary)));
 					m_cycles += CPU_CODE_BIT_ZERO_PAGE_CYCLES;
 					break;
 				default:
@@ -761,11 +761,11 @@ namespace NES {
 
 			switch(code) {
 				case CPU_CODE_JMP_ABSOLUTE:
-					m_register_pc = load_operand(CPU_MODE_ABSOLUTE, boundary);
+					m_register_pc = operand(CPU_MODE_ABSOLUTE, boundary);
 					m_cycles += CPU_CODE_JMP_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_JMP_INDIRECT:
-					m_register_pc = load_operand(CPU_MODE_INDIRECT, boundary);
+					m_register_pc = operand(CPU_MODE_INDIRECT, boundary);
 					m_cycles += CPU_CODE_JMP_INDIRECT_CYCLES;
 					break;
 				default:
@@ -788,7 +788,7 @@ namespace NES {
 					"0x%x", code);
 			}
 
-			subroutine(load_operand(CPU_MODE_ABSOLUTE, boundary));
+			subroutine(operand(CPU_MODE_ABSOLUTE, boundary));
 			m_cycles += CPU_CODE_JSR_ABSOLUTE_CYCLES;
 		}
 
@@ -803,11 +803,11 @@ namespace NES {
 
 			switch(code) {
 				case CPU_CODE_LDA_ABSOLUTE:
-					m_register_a = load(load_operand(CPU_MODE_ABSOLUTE, boundary));
+					m_register_a = load(operand(CPU_MODE_ABSOLUTE, boundary));
 					m_cycles += CPU_CODE_LDA_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_LDA_ABSOLUTE_X:
-					m_register_a = load(load_operand(CPU_MODE_ABSOLUTE_X, boundary));
+					m_register_a = load(operand(CPU_MODE_ABSOLUTE_X, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -816,7 +816,7 @@ namespace NES {
 					m_cycles += CPU_CODE_LDA_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_LDA_ABSOLUTE_Y:
-					m_register_a = load(load_operand(CPU_MODE_ABSOLUTE_Y, boundary));
+					m_register_a = load(operand(CPU_MODE_ABSOLUTE_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -825,15 +825,15 @@ namespace NES {
 					m_cycles += CPU_CODE_LDA_ABSOLUTE_Y_CYCLES;
 					break;
 				case CPU_CODE_LDA_IMMEDIATE:
-					m_register_a = load_operand(CPU_MODE_IMMEDIATE, boundary);
+					m_register_a = operand(CPU_MODE_IMMEDIATE, boundary);
 					m_cycles += CPU_CODE_LDA_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_LDA_INDIRECT_X:
-					m_register_a = load(load_operand(CPU_MODE_INDIRECT_X, boundary));
+					m_register_a = load(operand(CPU_MODE_INDIRECT_X, boundary));
 					m_cycles += CPU_CODE_LDA_INDIRECT_X_CYCLES;
 					break;
 				case CPU_CODE_LDA_INDIRECT_Y:
-					m_register_a = load(load_operand(CPU_MODE_INDIRECT_Y, boundary));
+					m_register_a = load(operand(CPU_MODE_INDIRECT_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -842,11 +842,11 @@ namespace NES {
 					m_cycles += CPU_CODE_LDA_INDIRECT_Y_CYCLES;
 					break;
 				case CPU_CODE_LDA_ZERO_PAGE:
-					m_register_a = load(load_operand(CPU_MODE_ZERO_PAGE, boundary));
+					m_register_a = load(operand(CPU_MODE_ZERO_PAGE, boundary));
 					m_cycles += CPU_CODE_LDA_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_LDA_ZERO_PAGE_X:
-					m_register_a = load(load_operand(CPU_MODE_ZERO_PAGE_X, boundary));
+					m_register_a = load(operand(CPU_MODE_ZERO_PAGE_X, boundary));
 					m_cycles += CPU_CODE_LDA_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -870,11 +870,11 @@ namespace NES {
 
 			switch(code) {
 				case CPU_CODE_LDX_ABSOLUTE:
-					m_register_x = load(load_operand(CPU_MODE_ABSOLUTE, boundary));
+					m_register_x = load(operand(CPU_MODE_ABSOLUTE, boundary));
 					m_cycles += CPU_CODE_LDX_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_LDX_ABSOLUTE_Y:
-					m_register_x = load(load_operand(CPU_MODE_ABSOLUTE_Y, boundary));
+					m_register_x = load(operand(CPU_MODE_ABSOLUTE_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -883,15 +883,15 @@ namespace NES {
 					m_cycles += CPU_CODE_LDX_ABSOLUTE_Y_CYCLES;
 					break;
 				case CPU_CODE_LDX_IMMEDIATE:
-					m_register_x = load_operand(CPU_MODE_IMMEDIATE, boundary);
+					m_register_x = operand(CPU_MODE_IMMEDIATE, boundary);
 					m_cycles += CPU_CODE_LDX_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_LDX_ZERO_PAGE:
-					m_register_x = load(load_operand(CPU_MODE_ZERO_PAGE, boundary));
+					m_register_x = load(operand(CPU_MODE_ZERO_PAGE, boundary));
 					m_cycles += CPU_CODE_LDX_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_LDX_ZERO_PAGE_Y:
-					m_register_x = load(load_operand(CPU_MODE_ZERO_PAGE_Y, boundary));
+					m_register_x = load(operand(CPU_MODE_ZERO_PAGE_Y, boundary));
 					m_cycles += CPU_CODE_LDX_ZERO_PAGE_Y_CYCLES;
 					break;
 				default:
@@ -915,11 +915,11 @@ namespace NES {
 
 			switch(code) {
 				case CPU_CODE_LDY_ABSOLUTE:
-					m_register_y = load(load_operand(CPU_MODE_ABSOLUTE, boundary));
+					m_register_y = load(operand(CPU_MODE_ABSOLUTE, boundary));
 					m_cycles += CPU_CODE_LDY_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_LDY_ABSOLUTE_X:
-					m_register_y = load(load_operand(CPU_MODE_ABSOLUTE_X, boundary));
+					m_register_y = load(operand(CPU_MODE_ABSOLUTE_X, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -928,15 +928,15 @@ namespace NES {
 					m_cycles += CPU_CODE_LDY_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_LDY_IMMEDIATE:
-					m_register_y = load_operand(CPU_MODE_IMMEDIATE, boundary);
+					m_register_y = operand(CPU_MODE_IMMEDIATE, boundary);
 					m_cycles += CPU_CODE_LDY_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_LDY_ZERO_PAGE:
-					m_register_y = load(load_operand(CPU_MODE_ZERO_PAGE, boundary));
+					m_register_y = load(operand(CPU_MODE_ZERO_PAGE, boundary));
 					m_cycles += CPU_CODE_LDY_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_LDY_ZERO_PAGE_X:
-					m_register_y = load(load_operand(CPU_MODE_ZERO_PAGE_X, boundary));
+					m_register_y = load(operand(CPU_MODE_ZERO_PAGE_X, boundary));
 					m_cycles += CPU_CODE_LDY_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -1338,55 +1338,46 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint16_t address = 0;
+			bool boundary = false;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_STA_ABSOLUTE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE, boundary);
 					m_cycles += CPU_CODE_STA_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_STA_ABSOLUTE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE_X, boundary);
 					m_cycles += CPU_CODE_STA_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_STA_ABSOLUTE_Y:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE_Y, boundary);
 					m_cycles += CPU_CODE_STA_ABSOLUTE_Y_CYCLES;
 					break;
 				case CPU_CODE_STA_INDIRECT_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_INDIRECT_X, boundary);
 					m_cycles += CPU_CODE_STA_INDIRECT_X_CYCLES;
 					break;
 				case CPU_CODE_STA_INDIRECT_Y:
-
-					// TODO
-
+					address = operand(CPU_MODE_INDIRECT_Y, boundary);
 					m_cycles += CPU_CODE_STA_INDIRECT_Y_CYCLES;
 					break;
 				case CPU_CODE_STA_ZERO_PAGE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE, boundary);
 					m_cycles += CPU_CODE_STA_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_STA_ZERO_PAGE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE_X, boundary);
 					m_cycles += CPU_CODE_STA_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
 					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_STA_CODE,
 						"0x%x", code);
 			}
+
+			store(address, m_register_a);
 		}
 
 		void 
@@ -1442,31 +1433,30 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint16_t address = 0;
+			bool boundary = false;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_STX_ABSOLUTE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE, boundary);
 					m_cycles += CPU_CODE_STX_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_STX_ZERO_PAGE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE, boundary);
 					m_cycles += CPU_CODE_STX_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_STX_ZERO_PAGE_Y:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE_Y, boundary);
 					m_cycles += CPU_CODE_STX_ZERO_PAGE_Y_CYCLES;
 					break;
 				default:
 					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_STX_CODE,
 						"0x%x", code);
 			}
+
+			store(address, m_register_x);
 		}
 
 		void 
@@ -1474,31 +1464,30 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint16_t address = 0;
+			bool boundary = false;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_STY_ABSOLUTE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE, boundary);
 					m_cycles += CPU_CODE_STY_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_STY_ZERO_PAGE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE, boundary);
 					m_cycles += CPU_CODE_STY_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_STY_ZERO_PAGE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE_X, boundary);
 					m_cycles += CPU_CODE_STY_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
 					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_STY_CODE,
 						"0x%x", code);
 			}
+
+			store(address, m_register_y);
 		}
 
 		void 
@@ -1580,7 +1569,29 @@ namespace NES {
 		}
 
 		uint16_t 
-		_nes_cpu::load_operand(
+		_nes_cpu::load_word(
+			__in uint16_t address
+			)
+		{
+			ATOMIC_CALL_RECUR(m_lock);
+			return (load(address) | (load(address + 1) << BITS_PER_BYTE));
+		}
+
+		void 
+		_nes_cpu::nmi(void)
+		{
+			ATOMIC_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_NES_CPU_EXCEPTION(NES_CPU_EXCEPTION_UNINITIALIZED);
+			}
+
+			interrupt(CPU_INTERRUPT_NMI_ADDRESS);
+			m_cycles += CPU_INTERRUPT_CYCLES;
+		}
+
+		uint16_t 
+		_nes_cpu::operand(
 			__in cpu_mode_t mode,
 			__out bool &boundary
 			)
@@ -1656,28 +1667,6 @@ namespace NES {
 			}
 
 			return result;
-		}
-
-		uint16_t 
-		_nes_cpu::load_word(
-			__in uint16_t address
-			)
-		{
-			ATOMIC_CALL_RECUR(m_lock);
-			return (load(address) | (load(address + 1) << BITS_PER_BYTE));
-		}
-
-		void 
-		_nes_cpu::nmi(void)
-		{
-			ATOMIC_CALL_RECUR(m_lock);
-
-			if(!m_initialized) {
-				THROW_NES_CPU_EXCEPTION(NES_CPU_EXCEPTION_UNINITIALIZED);
-			}
-
-			interrupt(CPU_INTERRUPT_NMI_ADDRESS);
-			m_cycles += CPU_INTERRUPT_CYCLES;
 		}
 
 		uint8_t 

@@ -183,6 +183,18 @@ namespace NES {
 					__in void *context
 					);
 
+				static nes_test_t execute_sta(
+					__in void *context
+					);
+
+				static nes_test_t execute_stx(
+					__in void *context
+					);
+
+				static nes_test_t execute_sty(
+					__in void *context
+					);
+
 				static nes_test_t execute_tax(
 					__in void *context
 					);
