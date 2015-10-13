@@ -192,14 +192,11 @@ namespace NES {
 
 			switch(code) {
 				case CPU_CODE_AND_ABSOLUTE:
-
-					// TODO
-
+					m_register_a &= load(operand(CPU_MODE_ABSOLUTE, boundary));
 					m_cycles += CPU_CODE_AND_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_AND_ABSOLUTE_X:
-
-					// TODO
+					m_register_a &= load(operand(CPU_MODE_ABSOLUTE_X, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -208,8 +205,7 @@ namespace NES {
 					m_cycles += CPU_CODE_AND_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_AND_ABSOLUTE_Y:
-
-					// TODO
+					m_register_a &= load(operand(CPU_MODE_ABSOLUTE_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -218,20 +214,15 @@ namespace NES {
 					m_cycles += CPU_CODE_AND_ABSOLUTE_Y_CYCLES;
 					break;
 				case CPU_CODE_AND_IMMEDIATE:
-
-					// TODO
-
+					m_register_a &= operand(CPU_MODE_IMMEDIATE, boundary);
 					m_cycles += CPU_CODE_AND_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_AND_INDIRECT_X:
-
-					// TODO
-
+					m_register_a &= load(operand(CPU_MODE_INDIRECT_X, boundary));
 					m_cycles += CPU_CODE_AND_INDIRECT_X_CYCLES;
 					break;
 				case CPU_CODE_AND_INDIRECT_Y:
-
-					// TODO
+					m_register_a &= load(operand(CPU_MODE_INDIRECT_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -240,15 +231,11 @@ namespace NES {
 					m_cycles += CPU_CODE_AND_INDIRECT_Y_CYCLES;
 					break;
 				case CPU_CODE_AND_ZERO_PAGE:
-
-					// TODO
-
+					m_register_a &= load(operand(CPU_MODE_ZERO_PAGE, boundary));
 					m_cycles += CPU_CODE_AND_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_AND_ZERO_PAGE_X:
-
-					// TODO
-
+					m_register_a &= load(operand(CPU_MODE_ZERO_PAGE_X, boundary));
 					m_cycles += CPU_CODE_AND_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -597,31 +584,27 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint8_t value = 0;
+			uint16_t address = 0;
+			bool boundary = false;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_DEC_ABSOLUTE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE, boundary);
 					m_cycles += CPU_CODE_DEC_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_DEC_ABSOLUTE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE_X, boundary);
 					m_cycles += CPU_CODE_DEC_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_DEC_ZERO_PAGE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE, boundary);
 					m_cycles += CPU_CODE_DEC_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_DEC_ZERO_PAGE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE_X, boundary);
 					m_cycles += CPU_CODE_DEC_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -629,7 +612,11 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			value = ((load(address) - 1) & UINT8_MAX);
+			store(address, value);
+			CPU_FLAG_SET_CONDITIONAL(value & CPU_FLAG_NEGATIVE, m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 
@@ -643,14 +630,11 @@ namespace NES {
 
 			switch(code) {
 				case CPU_CODE_EOR_ABSOLUTE:
-
-					// TODO
-
+					m_register_a ^= load(operand(CPU_MODE_ABSOLUTE, boundary));
 					m_cycles += CPU_CODE_EOR_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_EOR_ABSOLUTE_X:
-
-					// TODO
+					m_register_a ^= load(operand(CPU_MODE_ABSOLUTE_X, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -659,8 +643,7 @@ namespace NES {
 					m_cycles += CPU_CODE_EOR_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_EOR_ABSOLUTE_Y:
-
-					// TODO
+					m_register_a ^= load(operand(CPU_MODE_ABSOLUTE_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -669,20 +652,15 @@ namespace NES {
 					m_cycles += CPU_CODE_EOR_ABSOLUTE_Y_CYCLES;
 					break;
 				case CPU_CODE_EOR_IMMEDIATE:
-
-					// TODO
-
+					m_register_a ^= operand(CPU_MODE_IMMEDIATE, boundary);
 					m_cycles += CPU_CODE_EOR_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_EOR_INDIRECT_X:
-
-					// TODO
-
+					m_register_a ^= load(operand(CPU_MODE_INDIRECT_X, boundary));
 					m_cycles += CPU_CODE_EOR_INDIRECT_X_CYCLES;
 					break;
 				case CPU_CODE_EOR_INDIRECT_Y:
-
-					// TODO
+					m_register_a ^= load(operand(CPU_MODE_INDIRECT_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -691,15 +669,11 @@ namespace NES {
 					m_cycles += CPU_CODE_EOR_INDIRECT_Y_CYCLES;
 					break;
 				case CPU_CODE_EOR_ZERO_PAGE:
-
-					// TODO
-
+					m_register_a ^= load(operand(CPU_MODE_ZERO_PAGE, boundary));
 					m_cycles += CPU_CODE_EOR_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_EOR_ZERO_PAGE_X:
-
-					// TODO
-
+					m_register_a ^= load(operand(CPU_MODE_ZERO_PAGE_X, boundary));
 					m_cycles += CPU_CODE_EOR_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -707,7 +681,9 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			CPU_FLAG_SET_CONDITIONAL(m_register_a & CPU_FLAG_NEGATIVE, m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!m_register_a, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 
@@ -715,31 +691,27 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint8_t value = 0;
+			uint16_t address = 0;
+			bool boundary = false;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_INC_ABSOLUTE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE, boundary);
 					m_cycles += CPU_CODE_INC_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_INC_ABSOLUTE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE_X, boundary);
 					m_cycles += CPU_CODE_INC_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_INC_ZERO_PAGE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE, boundary);
 					m_cycles += CPU_CODE_INC_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_INC_ZERO_PAGE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE_X, boundary);
 					m_cycles += CPU_CODE_INC_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -747,7 +719,11 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			value = ((load(address) + 1) & UINT8_MAX);
+			store(address, value);
+			CPU_FLAG_SET_CONDITIONAL(value & CPU_FLAG_NEGATIVE, m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 
@@ -1021,14 +997,11 @@ namespace NES {
 
 			switch(code) {
 				case CPU_CODE_ORA_ABSOLUTE:
-
-					// TODO
-
+					m_register_a |= load(operand(CPU_MODE_ABSOLUTE, boundary));
 					m_cycles += CPU_CODE_ORA_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_ORA_ABSOLUTE_X:
-
-					// TODO
+					m_register_a |= load(operand(CPU_MODE_ABSOLUTE_X, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -1037,8 +1010,7 @@ namespace NES {
 					m_cycles += CPU_CODE_ORA_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_ORA_ABSOLUTE_Y:
-
-					// TODO
+					m_register_a |= load(operand(CPU_MODE_ABSOLUTE_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -1047,37 +1019,28 @@ namespace NES {
 					m_cycles += CPU_CODE_ORA_ABSOLUTE_Y_CYCLES;
 					break;
 				case CPU_CODE_ORA_IMMEDIATE:
-
-					// TODO
-
+					m_register_a |= operand(CPU_MODE_IMMEDIATE, boundary);
 					m_cycles += CPU_CODE_ORA_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_ORA_INDIRECT_X:
-
-					// TODO
-
+					m_register_a |= load(operand(CPU_MODE_INDIRECT_X, boundary));
 					m_cycles += CPU_CODE_ORA_INDIRECT_X_CYCLES;
 					break;
 				case CPU_CODE_ORA_INDIRECT_Y:
-
-					// TODO
-
-					m_cycles += CPU_CODE_ORA_INDIRECT_Y_CYCLES;
-					break;
-				case CPU_CODE_ORA_ZERO_PAGE:
-
-					// TODO
+					m_register_a |= load(operand(CPU_MODE_INDIRECT_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
 					}
 
+					m_cycles += CPU_CODE_ORA_INDIRECT_Y_CYCLES;
+					break;
+				case CPU_CODE_ORA_ZERO_PAGE:
+					m_register_a |= load(operand(CPU_MODE_ZERO_PAGE, boundary));
 					m_cycles += CPU_CODE_ORA_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_ORA_ZERO_PAGE_X:
-
-					// TODO
-
+					m_register_a |= load(operand(CPU_MODE_ZERO_PAGE_X, boundary));
 					m_cycles += CPU_CODE_ORA_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -1085,7 +1048,9 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			CPU_FLAG_SET_CONDITIONAL(m_register_a & CPU_FLAG_NEGATIVE, m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!m_register_a, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 

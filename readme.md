@@ -12,6 +12,11 @@ Table of Contents
 Changelog
 =========
 
+##Version 0.1.1542
+*Updated:10/12/2015*
+
+* Added inc/dec and binary operation commands
+
 ##Version 0.1.1541
 *Updated:10/11/2015*
 
@@ -43,37 +48,6 @@ Changelog
 
 * Added command test cases (partial)
 * Fixed interrupt code
-
-##Version 0.1.1540
-*Updated:10/3/2015*
-
-* Added cpu instructions (partial)
-* Added cpu unit tests (partial)
-
-*Updated:10/2/2015*
-
-* Added cpu/memory unit test files (partial)
-* Added public c-style interface (partial)
-
-*Updated:10/1/2015*
-
-* Added testing framework
-
-*Updated:9/30/2015*
-
-* Added cpu opcode handlers (partial)
-
-*Updated:9/29/2015*
-
-* Added cpu class
-
-*Updated:9/28/2015*
-
-* Added memory manager class
-
-*Updated:9/27/2015*
-
-* Initial commit
 
 *Changelog truncated (see file history for full log)*
 

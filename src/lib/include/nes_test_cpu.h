@@ -51,6 +51,10 @@ namespace NES {
 					__in void *context
 					);
 
+				static nes_test_t execute_and(
+					__in void *context
+					);
+
 				static nes_test_t execute_bcc(
 					__in void *context
 					);
@@ -107,11 +111,23 @@ namespace NES {
 					__in void *context
 					);
 
+				static nes_test_t execute_dec(
+					__in void *context
+					);
+
 				static nes_test_t execute_dex(
 					__in void *context
 					);
 
 				static nes_test_t execute_dey(
+					__in void *context
+					);
+
+				static nes_test_t execute_eor(
+					__in void *context
+					);
+
+				static nes_test_t execute_inc(
 					__in void *context
 					);
 
@@ -144,6 +160,10 @@ namespace NES {
 					);
 
 				static nes_test_t execute_nop(
+					__in void *context
+					);
+
+				static nes_test_t execute_ora(
 					__in void *context
 					);
 
