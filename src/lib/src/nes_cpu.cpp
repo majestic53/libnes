@@ -73,6 +73,30 @@ namespace NES {
 			return nes_cpu::m_instance;
 		}
 
+		uint8_t 
+		_nes_cpu::bcd_in(
+			__in uint8_t value
+			)
+		{
+			uint8_t high, low;
+
+			ATOMIC_CALL_RECUR(m_lock);
+
+			high = (value / 10);
+			low = (value % 10);
+
+			return (((high << 4) & 0xf0) | (low & 0xf));
+		}
+
+		uint8_t 
+		_nes_cpu::bcd_out(
+			__in uint8_t value
+			)
+		{
+			ATOMIC_CALL_RECUR(m_lock);
+			return ((((value & 0xf0) >> 4) * 10) + (value & 0xf));
+		}
+
 		void 
 		_nes_cpu::clear(void)
 		{
@@ -109,19 +133,17 @@ namespace NES {
 			)
 		{
 			bool boundary = false;
+			uint8_t orig = 0, value = 0;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_ADC_ABSOLUTE:
-
-					// TODO
-
+					orig = load(operand(CPU_MODE_ABSOLUTE, boundary));
 					m_cycles += CPU_CODE_ADC_ABSOLUTE_CYLCES;
 					break;
 				case CPU_CODE_ADC_ABSOLUTE_X:
-
-					// TODO
+					orig = load(operand(CPU_MODE_ABSOLUTE_X, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -130,8 +152,7 @@ namespace NES {
 					m_cycles += CPU_CODE_ADC_ABSOLUTE_X_CYLCES;
 					break;
 				case CPU_CODE_ADC_ABSOLUTE_Y:
-
-					// TODO
+					orig = load(operand(CPU_MODE_ABSOLUTE_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -140,20 +161,15 @@ namespace NES {
 					m_cycles += CPU_CODE_ADC_ABSOLUTE_Y_CYLCES;
 					break;
 				case CPU_CODE_ADC_IMMEDIATE:
-
-					// TODO
-
+					orig = operand(CPU_MODE_IMMEDIATE, boundary);
 					m_cycles += CPU_CODE_ADC_IMMEDIATE_CYLCES;
 					break;
 				case CPU_CODE_ADC_INDIRECT_X:
-
-					// TODO
-
+					orig = load(operand(CPU_MODE_INDIRECT_X, boundary));
 					m_cycles += CPU_CODE_ADC_INDIRECT_X_CYLCES;
 					break;
 				case CPU_CODE_ADC_INDIRECT_Y:
-
-					// TODO
+					orig = load(operand(CPU_MODE_INDIRECT_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -162,15 +178,11 @@ namespace NES {
 					m_cycles += CPU_CODE_ADC_INDIRECT_Y_CYLCES;
 					break;
 				case CPU_CODE_ADC_ZERO_PAGE:
-
-					// TODO
-
+					orig = load(operand(CPU_MODE_ZERO_PAGE, boundary));
 					m_cycles += CPU_CODE_ADC_ZERO_PAGE_CYLCES;
 					break;
 				case CPU_CODE_ADC_ZERO_PAGE_X:
-
-					// TODO
-
+					orig = load(operand(CPU_MODE_ZERO_PAGE_X, boundary));
 					m_cycles += CPU_CODE_ADC_ZERO_PAGE_X_CYLCES;
 					break;
 				default:
@@ -178,7 +190,25 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			value = (orig + (m_register_a + (CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY) 
+				? 1 : 0)));
+			CPU_FLAG_SET_CONDITIONAL((CPU_FLAG_CHECK(m_register_a, CPU_FLAG_NEGATIVE) 
+				!= CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE)), m_register_p, CPU_FLAG_OVERFLOW);
+			CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(m_register_a, CPU_FLAG_NEGATIVE), m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+
+			if(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_DECIMAL)) {
+				value = (bcd_in(m_register_a) + bcd_in(orig) 
+					+ (CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY) ? 1 : 0));
+				CPU_FLAG_SET_CONDITIONAL(value > CPU_BCD_MAX, m_register_p, 
+					CPU_FLAG_CARRY);
+			} else {
+				CPU_FLAG_SET_CONDITIONAL(value > UINT8_MAX, m_register_p, 
+					CPU_FLAG_CARRY);
+			}
+
+			m_register_a = value;
 		}
 
 		void 
@@ -253,45 +283,76 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint8_t value = 0;
+			uint16_t address = 0;
+			bool boundary = false;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_ASL_ABSOLUTE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE, boundary);
+					value = load(address);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+						m_register_p, CPU_FLAG_CARRY);
+					value = ((value << 1) & (UINT8_MAX - 1));
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
+						m_register_p, CPU_FLAG_NEGATIVE);
+					CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+					store(address, value);
 					m_cycles += CPU_CODE_ASL_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_ASL_ABSOLUTE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE_X, boundary);
+					value = load(address);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+						m_register_p, CPU_FLAG_CARRY);
+					value = ((value << 1) & (UINT8_MAX - 1));
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
+						m_register_p, CPU_FLAG_NEGATIVE);
+					CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+					store(address, value);
 					m_cycles += CPU_CODE_ASL_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_ASL_ACCUMULATOR:
-
-					// TODO
-
+					value = operand(CPU_MODE_ACCUMULATOR, boundary);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+						m_register_p, CPU_FLAG_CARRY);
+					value = ((value << 1) & (UINT8_MAX - 1));
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
+						m_register_p, CPU_FLAG_NEGATIVE);
+					CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+					m_register_a = value;
 					m_cycles += CPU_CODE_ASL_ACCUMULATOR_CYCLES;
 					break;
 				case CPU_CODE_ASL_ZERO_PAGE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE, boundary);
+					value = load(address);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+						m_register_p, CPU_FLAG_CARRY);
+					value = ((value << 1) & (UINT8_MAX - 1));
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
+						m_register_p, CPU_FLAG_NEGATIVE);
+					CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+					store(address, value);
 					m_cycles += CPU_CODE_ASL_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_ASL_ZERO_PAGE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE_X, boundary);
+					value = load(address);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+						m_register_p, CPU_FLAG_CARRY);
+					value = ((value << 1) & (UINT8_MAX - 1));
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
+						m_register_p, CPU_FLAG_NEGATIVE);
+					CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+					store(address, value);
 					m_cycles += CPU_CODE_ASL_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
 					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_ASL_CODE,
 						"0x%x", code);
 			}
-
-			// TODO: set flags
 		}
 
 		void 
@@ -438,20 +499,18 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint8_t value = 0;
 			bool boundary = false;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_CMP_ABSOLUTE:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_ABSOLUTE, boundary));
 					m_cycles += CPU_CODE_CMP_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_CMP_ABSOLUTE_X:
-
-					// TODO
+					value = load(operand(CPU_MODE_ABSOLUTE_X, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -460,8 +519,7 @@ namespace NES {
 					m_cycles += CPU_CODE_CMP_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_CMP_ABSOLUTE_Y:
-
-					// TODO
+					value = load(operand(CPU_MODE_ABSOLUTE_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -470,20 +528,15 @@ namespace NES {
 					m_cycles += CPU_CODE_CMP_ABSOLUTE_Y_CYCLES;
 					break;
 				case CPU_CODE_CMP_IMMEDIATE:
-
-					// TODO
-
+					value = operand(CPU_MODE_IMMEDIATE, boundary);
 					m_cycles += CPU_CODE_CMP_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_CMP_INDIRECT_X:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_INDIRECT_X, boundary));
 					m_cycles += CPU_CODE_CMP_INDIRECT_X_CYCLES;
 					break;
 				case CPU_CODE_CMP_INDIRECT_Y:
-
-					// TODO
+					value = load(operand(CPU_MODE_INDIRECT_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -492,15 +545,11 @@ namespace NES {
 					m_cycles += CPU_CODE_CMP_INDIRECT_Y_CYCLES;
 					break;
 				case CPU_CODE_CMP_ZERO_PAGE:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_ZERO_PAGE, boundary));
 					m_cycles += CPU_CODE_CMP_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_CMP_ZERO_PAGE_X:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_ZERO_PAGE_X, boundary));
 					m_cycles += CPU_CODE_CMP_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -508,7 +557,11 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			CPU_FLAG_SET_CONDITIONAL(m_register_a >= value, m_register_p, CPU_FLAG_CARRY);
+			value = (m_register_a - value);
+			CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE), m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 
@@ -516,25 +569,22 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint8_t value = 0;
+			bool boundary = false;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_CPX_ABSOLUTE:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_ABSOLUTE, boundary));
 					m_cycles += CPU_CODE_CPX_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_CPX_IMMEDIATE:
-
-					// TODO
-
+					value = operand(CPU_MODE_IMMEDIATE, boundary);
 					m_cycles += CPU_CODE_CPX_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_CPX_ZERO_PAGE:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_ZERO_PAGE, boundary));
 					m_cycles += CPU_CODE_CPX_ZERO_PAGE_CYCLES;
 					break;
 				default:
@@ -542,7 +592,11 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			CPU_FLAG_SET_CONDITIONAL(m_register_x >= value, m_register_p, CPU_FLAG_CARRY);
+			value = (m_register_x - value);
+			CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE), m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 
@@ -550,25 +604,22 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint8_t value = 0;
+			bool boundary = false;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_CPY_ABSOLUTE:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_ABSOLUTE, boundary));
 					m_cycles += CPU_CODE_CPY_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_CPY_IMMEDIATE:
-
-					// TODO
-
+					value = operand(CPU_MODE_IMMEDIATE, boundary);
 					m_cycles += CPU_CODE_CPY_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_CPY_ZERO_PAGE:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_ZERO_PAGE, boundary));
 					m_cycles += CPU_CODE_CPY_ZERO_PAGE_CYCLES;
 					break;
 				default:
@@ -576,7 +627,11 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			CPU_FLAG_SET_CONDITIONAL(m_register_y >= value, m_register_p, CPU_FLAG_CARRY);
+			value = (m_register_y - value);
+			CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE), m_register_p, 
+				CPU_FLAG_NEGATIVE);
+			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
 		}
 
 		void 
@@ -930,37 +985,60 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint8_t value = 0;
+			uint16_t address = 0;
+			bool boundary = false;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_LSR_ABSOLUTE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE, boundary);
+					value = load(address);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+						m_register_p, CPU_FLAG_CARRY);
+					value = ((value >> 1) & INT8_MAX);
+					CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+					store(address, value);
 					m_cycles += CPU_CODE_LSR_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_LSR_ABSOLUTE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE_X, boundary);
+					value = load(address);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+						m_register_p, CPU_FLAG_CARRY);
+					value = ((value >> 1) & INT8_MAX);
+					CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+					store(address, value);
 					m_cycles += CPU_CODE_LSR_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_LSR_ACCUMULATOR:
-
-					// TODO
-
+					value = operand(CPU_MODE_ACCUMULATOR, boundary);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+						m_register_p, CPU_FLAG_CARRY);
+					value = ((value >> 1) & INT8_MAX);
+					CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+					m_register_a = value;
 					m_cycles += CPU_CODE_LSR_ACCUMULATOR_CYCLES;
 					break;
 				case CPU_CODE_LSR_ZERO_PAGE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE, boundary);
+					value = load(address);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+						m_register_p, CPU_FLAG_CARRY);
+					value = ((value >> 1) & INT8_MAX);
+					CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+					store(address, value);
 					m_cycles += CPU_CODE_LSR_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_LSR_ZERO_PAGE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE_X, boundary);
+					value = load(address);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+						m_register_p, CPU_FLAG_CARRY);
+					value = ((value >> 1) & INT8_MAX);
+					CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+					store(address, value);
 					m_cycles += CPU_CODE_LSR_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -968,7 +1046,7 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_NEGATIVE);
 		}
 
 		void 
@@ -1101,37 +1179,60 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint8_t value = 0;
+			uint16_t address = 0;
+			bool boundary = false, carry = false;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_ROL_ABSOLUTE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE, boundary);
+					value = load(address);
+					carry = CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE);
+					value = ((value << 1) & (UINT8_MAX - 1));
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY), 
+						value, CPU_FLAG_CARRY);
+					store(address, value);
 					m_cycles += CPU_CODE_ROL_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_ROL_ABSOLUTE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE_X, boundary);
+					value = load(address);
+					carry = CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE);
+					value = ((value << 1) & (UINT8_MAX - 1));
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY), 
+						value, CPU_FLAG_CARRY);
+					store(address, value);
 					m_cycles += CPU_CODE_ROL_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_ROL_ACCUMULATOR:
-
-					// TODO
-
+					value = operand(CPU_MODE_ACCUMULATOR, boundary);
+					carry = CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE);
+					value = ((value << 1) & (UINT8_MAX - 1));
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY), 
+						value, CPU_FLAG_CARRY);
+					m_register_a = value;
 					m_cycles += CPU_CODE_ROL_ACCUMULATOR_CYCLES;
 					break;
 				case CPU_CODE_ROL_ZERO_PAGE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE, boundary);
+					value = load(address);
+					carry = CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE);
+					value = ((value << 1) & (UINT8_MAX - 1));
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY), 
+						value, CPU_FLAG_CARRY);
+					store(address, value);
 					m_cycles += CPU_CODE_ROL_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_ROL_ZERO_PAGE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE_X, boundary);
+					value = load(address);
+					carry = CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE);
+					value = ((value << 1) & (UINT8_MAX - 1));
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY), 
+						value, CPU_FLAG_CARRY);
+					store(address, value);
 					m_cycles += CPU_CODE_ROL_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -1139,7 +1240,10 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			CPU_FLAG_SET_CONDITIONAL(carry, m_register_p, CPU_FLAG_CARRY);
+			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+			CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
+				m_register_p, CPU_FLAG_NEGATIVE);
 		}
 
 		void 
@@ -1147,37 +1251,60 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint8_t value = 0;
+			uint16_t address = 0;
+			bool boundary = false, carry = false;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_ROR_ABSOLUTE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE, boundary);
+					value = load(address);
+					carry = CPU_FLAG_CHECK(value, CPU_FLAG_CARRY);
+					value = ((value >> 1) & INT8_MAX);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY), 
+						value, CPU_FLAG_NEGATIVE);
+					store(address, value);
 					m_cycles += CPU_CODE_ROR_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_ROR_ABSOLUTE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ABSOLUTE_X, boundary);
+					value = load(address);
+					carry = CPU_FLAG_CHECK(value, CPU_FLAG_CARRY);
+					value = ((value >> 1) & INT8_MAX);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY), 
+						value, CPU_FLAG_NEGATIVE);
+					store(address, value);
 					m_cycles += CPU_CODE_ROR_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_ROR_ACCUMULATOR:
-
-					// TODO
-
+					value = operand(CPU_MODE_ACCUMULATOR, boundary);
+					carry = CPU_FLAG_CHECK(value, CPU_FLAG_CARRY);
+					value = ((value >> 1) & INT8_MAX);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY), 
+						value, CPU_FLAG_NEGATIVE);
+					m_register_a = value;
 					m_cycles += CPU_CODE_ROR_ACCUMULATOR_CYCLES;
 					break;
 				case CPU_CODE_ROR_ZERO_PAGE:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE, boundary);
+					value = load(address);
+					carry = CPU_FLAG_CHECK(value, CPU_FLAG_CARRY);
+					value = ((value >> 1) & INT8_MAX);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY), 
+						value, CPU_FLAG_NEGATIVE);
+					store(address, value);
 					m_cycles += CPU_CODE_ROR_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_ROR_ZERO_PAGE_X:
-
-					// TODO
-
+					address = operand(CPU_MODE_ZERO_PAGE_X, boundary);
+					value = load(address);
+					carry = CPU_FLAG_CHECK(value, CPU_FLAG_CARRY);
+					value = ((value >> 1) & INT8_MAX);
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY), 
+						value, CPU_FLAG_NEGATIVE);
+					store(address, value);
 					m_cycles += CPU_CODE_ROR_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -1185,7 +1312,10 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			CPU_FLAG_SET_CONDITIONAL(carry, m_register_p, CPU_FLAG_CARRY);
+			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+			CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
+				m_register_p, CPU_FLAG_NEGATIVE);
 		}
 
 		void 
@@ -1225,20 +1355,18 @@ namespace NES {
 			__in uint8_t code
 			)
 		{
+			uint8_t value = 0;
 			bool boundary = false;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
 			switch(code) {
 				case CPU_CODE_SBC_ABSOLUTE:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_ABSOLUTE, boundary));
 					m_cycles += CPU_CODE_SBC_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_SBC_ABSOLUTE_X:
-
-					// TODO
+					value = load(operand(CPU_MODE_ABSOLUTE_X, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -1247,8 +1375,7 @@ namespace NES {
 					m_cycles += CPU_CODE_SBC_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_SBC_ABSOLUTE_Y:
-
-					// TODO
+					value = load(operand(CPU_MODE_ABSOLUTE_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -1257,20 +1384,15 @@ namespace NES {
 					m_cycles += CPU_CODE_SBC_ABSOLUTE_Y_CYCLES;
 					break;
 				case CPU_CODE_SBC_IMMEDIATE:
-
-					// TODO
-
+					value = operand(CPU_MODE_IMMEDIATE, boundary);
 					m_cycles += CPU_CODE_SBC_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_SBC_INDIRECT_X:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_INDIRECT_X, boundary));
 					m_cycles += CPU_CODE_SBC_INDIRECT_X_CYCLES;
 					break;
 				case CPU_CODE_SBC_INDIRECT_Y:
-
-					// TODO
+					value = load(operand(CPU_MODE_INDIRECT_Y, boundary));
 
 					if(boundary) {
 						++m_cycles;
@@ -1279,15 +1401,11 @@ namespace NES {
 					m_cycles += CPU_CODE_SBC_INDIRECT_Y_CYCLES;
 					break;
 				case CPU_CODE_SBC_ZERO_PAGE:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_ZERO_PAGE, boundary));
 					m_cycles += CPU_CODE_SBC_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_SBC_ZERO_PAGE_X:
-
-					// TODO
-
+					value = load(operand(CPU_MODE_ZERO_PAGE_X, boundary));
 					m_cycles += CPU_CODE_SBC_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
@@ -1295,7 +1413,21 @@ namespace NES {
 						"0x%x", code);
 			}
 
-			// TODO: set flags
+			if(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_DECIMAL)) {
+				value = (bcd_in(m_register_a) - bcd_in(value) 
+					- (CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY) ? 0 : 1));
+				CPU_FLAG_SET_CONDITIONAL(((((int8_t) value) > CPU_BCD_MAX) || (((int8_t) value) < 0)), 
+					m_register_p, CPU_FLAG_OVERFLOW);
+			} else {
+				value = (m_register_a - value - (CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY) 
+					? 0 : 1));
+				CPU_FLAG_SET_CONDITIONAL(((((int8_t) value) > INT8_MAX) || (((int8_t) value) < INT8_MIN)), 
+					m_register_p, CPU_FLAG_OVERFLOW);
+			}
+
+			CPU_FLAG_SET_CONDITIONAL(((int8_t) value) >= 0, m_register_p, CPU_FLAG_CARRY);
+			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
+			m_register_a = value;
 		}
 
 		void 

@@ -48,7 +48,9 @@ namespace NES {
 			NES_TEST_CPU_ACQUIRE = 0,
 			NES_TEST_CPU_CLEAR,
 			NES_TEST_CPU_CYCLES,
+			NES_TEST_CPU_EXECUTE_ADC,
 			NES_TEST_CPU_EXECUTE_AND,
+			NES_TEST_CPU_EXECUTE_ASL,
 			NES_TEST_CPU_EXECUTE_BCC,
 			NES_TEST_CPU_EXECUTE_BCS,
 			NES_TEST_CPU_EXECUTE_BEQ,
@@ -63,6 +65,9 @@ namespace NES {
 			NES_TEST_CPU_EXECUTE_CLD,
 			NES_TEST_CPU_EXECUTE_CLI,
 			NES_TEST_CPU_EXECUTE_CLV,
+			NES_TEST_CPU_EXECUTE_CMP,
+			NES_TEST_CPU_EXECUTE_CPX,
+			NES_TEST_CPU_EXECUTE_CPY,
 			NES_TEST_CPU_EXECUTE_DEC,
 			NES_TEST_CPU_EXECUTE_DEX,
 			NES_TEST_CPU_EXECUTE_DEY,
@@ -75,14 +80,18 @@ namespace NES {
 			NES_TEST_CPU_EXECUTE_LDA,
 			NES_TEST_CPU_EXECUTE_LDX,
 			NES_TEST_CPU_EXECUTE_LDY,
+			NES_TEST_CPU_EXECUTE_LSR,
 			NES_TEST_CPU_EXECUTE_NOP,
 			NES_TEST_CPU_EXECUTE_ORA,
 			NES_TEST_CPU_EXECUTE_PHA,
 			NES_TEST_CPU_EXECUTE_PHP,
 			NES_TEST_CPU_EXECUTE_PLA,
 			NES_TEST_CPU_EXECUTE_PLP,
+			NES_TEST_CPU_EXECUTE_ROL,
+			NES_TEST_CPU_EXECUTE_ROR,
 			NES_TEST_CPU_EXECUTE_RTI,
 			NES_TEST_CPU_EXECUTE_RTS,
+			NES_TEST_CPU_EXECUTE_SBC,
 			NES_TEST_CPU_EXECUTE_SEC,
 			NES_TEST_CPU_EXECUTE_SED,
 			NES_TEST_CPU_EXECUTE_SEI,
@@ -111,7 +120,9 @@ namespace NES {
 			NES_CPU_HEADER "::ACQUIRE",
 			NES_CPU_HEADER "::CLEAR",
 			NES_CPU_HEADER "::CYCLES",
+			NES_CPU_HEADER "::ADC",
 			NES_CPU_HEADER "::AND",
+			NES_CPU_HEADER "::ASL",
 			NES_CPU_HEADER "::BCC",
 			NES_CPU_HEADER "::BCS",
 			NES_CPU_HEADER "::BEQ",
@@ -126,6 +137,9 @@ namespace NES {
 			NES_CPU_HEADER "::CLD",
 			NES_CPU_HEADER "::CLI",
 			NES_CPU_HEADER "::CLV",
+			NES_CPU_HEADER "::CMP",
+			NES_CPU_HEADER "::CPX",
+			NES_CPU_HEADER "::CPY",
 			NES_CPU_HEADER "::DEC",
 			NES_CPU_HEADER "::DEX",
 			NES_CPU_HEADER "::DEY",
@@ -138,14 +152,18 @@ namespace NES {
 			NES_CPU_HEADER "::LDA",
 			NES_CPU_HEADER "::LDX",
 			NES_CPU_HEADER "::LDY",
+			NES_CPU_HEADER "::LSR",
 			NES_CPU_HEADER "::NOP",
 			NES_CPU_HEADER "::ORA",
 			NES_CPU_HEADER "::PHA",
 			NES_CPU_HEADER "::PHP",
 			NES_CPU_HEADER "::PLA",
 			NES_CPU_HEADER "::PLP",
+			NES_CPU_HEADER "::ROL",
+			NES_CPU_HEADER "::ROR",
 			NES_CPU_HEADER "::RTI",
 			NES_CPU_HEADER "::RTS",
+			NES_CPU_HEADER "::SBC",
 			NES_CPU_HEADER "::SEC",
 			NES_CPU_HEADER "::SED",
 			NES_CPU_HEADER "::SEI",
@@ -176,7 +194,9 @@ namespace NES {
 			nes_test_cpu::acquire,
 			nes_test_cpu::clear,
 			nes_test_cpu::cycles,
+			nes_test_cpu::execute_adc,
 			nes_test_cpu::execute_and,
+			nes_test_cpu::execute_asl,
 			nes_test_cpu::execute_bcc,
 			nes_test_cpu::execute_bcs,
 			nes_test_cpu::execute_beq,
@@ -191,6 +211,9 @@ namespace NES {
 			nes_test_cpu::execute_cld,
 			nes_test_cpu::execute_cli,
 			nes_test_cpu::execute_clv,
+			nes_test_cpu::execute_cmp,
+			nes_test_cpu::execute_cpx,
+			nes_test_cpu::execute_cpy,
 			nes_test_cpu::execute_dec,
 			nes_test_cpu::execute_dex,
 			nes_test_cpu::execute_dey,
@@ -203,14 +226,18 @@ namespace NES {
 			nes_test_cpu::execute_lda,
 			nes_test_cpu::execute_ldx,
 			nes_test_cpu::execute_ldy,
+			nes_test_cpu::execute_lsr,
 			nes_test_cpu::execute_nop,
 			nes_test_cpu::execute_ora,
 			nes_test_cpu::execute_pha,
 			nes_test_cpu::execute_php,
 			nes_test_cpu::execute_pla,
 			nes_test_cpu::execute_plp,
+			nes_test_cpu::execute_rol,
+			nes_test_cpu::execute_ror,
 			nes_test_cpu::execute_rti,
 			nes_test_cpu::execute_rts,
+			nes_test_cpu::execute_sbc,
 			nes_test_cpu::execute_sec,
 			nes_test_cpu::execute_sed,
 			nes_test_cpu::execute_sei,
@@ -455,6 +482,61 @@ exit:
 			return result;
 		}
  
+		nes_test_t 
+		_nes_test_cpu::execute_adc(
+			__in void *context
+			)
+		{
+			nes_cpu_ptr inst = NULL;
+			//nes_cpu_state st = { 0 };
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_cpu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// CPU_CODE_ADC_ABSOLUTE
+				// TODO
+
+				// CPU_CODE_ADC_ABSOLUTE_X
+				// TODO
+
+				// CPU_CODE_ADC_ABSOLUTE_Y
+				// TODO
+
+				// CPU_CODE_ADC_IMMEDIATE
+				// TODO
+
+				// CPU_CODE_ADC_INDIRECT_X
+				// TODO
+
+				// CPU_CODE_ADC_INDIRECT_Y
+				// TODO
+
+				// CPU_CODE_ADC_ZERO_PAGE
+				// TODO
+
+				// CPU_CODE_ADC_ZERO_PAGE_X
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
 		nes_test_t 
 		_nes_test_cpu::execute_and(
 			__in void *context
@@ -781,6 +863,52 @@ exit:
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_cpu::execute_asl(
+			__in void *context
+			)
+		{
+			nes_cpu_ptr inst = NULL;
+			//nes_cpu_state st = { 0 };
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_cpu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// CPU_CODE_ASL_ABSOLUTE
+				// TODO
+
+				// CPU_CODE_ASL_ABSOLUTE_X
+				// TODO
+
+				// CPU_CODE_ASL_ACCUMULATOR
+				// TODO
+
+				// CPU_CODE_ASL_ZERO_PAGE
+				// TODO
+
+				// CPU_CODE_ASL_ZERO_PAGE_X
+				// TODO
+
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -2442,6 +2570,141 @@ exit:
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_cpu::execute_cmp(
+			__in void *context
+			)
+		{
+			nes_cpu_ptr inst = NULL;
+			//nes_cpu_state st = { 0 };
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_cpu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// CPU_CODE_CMP_ABSOLUTE
+				// TODO
+
+				// CPU_CODE_CMP_ABSOLUTE_X
+				// TODO
+
+				// CPU_CODE_CMP_ABSOLUTE_Y
+				// TODO
+
+				// CPU_CODE_CMP_IMMEDIATE
+				// TODO
+
+				// CPU_CODE_CMP_INDIRECT_X
+				// TODO
+
+				// CPU_CODE_CMP_INDIRECT_Y
+				// TODO
+
+				// CPU_CODE_CMP_ZERO_PAGE
+				// TODO
+
+				// CPU_CODE_CMP_ZERO_PAGE_X
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_cpu::execute_cpx(
+			__in void *context
+			)
+		{
+			nes_cpu_ptr inst = NULL;
+			//nes_cpu_state st = { 0 };
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_cpu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// CPU_CODE_CPX_ABSOLUTE
+				// TODO
+
+				// CPU_CODE_CPX_IMMEDIATE
+				// TODO
+
+				// CPU_CODE_CPX_ZERO_PAGE
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_cpu::execute_cpy(
+			__in void *context
+			)
+		{
+			nes_cpu_ptr inst = NULL;
+			//nes_cpu_state st = { 0 };
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_cpu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// CPU_CODE_CPY_ABSOLUTE
+				// TODO
+
+				// CPU_CODE_CPY_IMMEDIATE
+				// TODO
+
+				// CPU_CODE_CPY_ZERO_PAGE
+				// TODO
+
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -4379,6 +4642,52 @@ exit:
 		}
 
 		nes_test_t 
+		_nes_test_cpu::execute_lsr(
+			__in void *context
+			)
+		{
+			nes_cpu_ptr inst = NULL;
+			//nes_cpu_state st = { 0 };
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_cpu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// CPU_CODE_LSR_ABSOLUTE
+				// TODO
+
+				// CPU_CODE_LSR_ABSOLUTE_X
+				// TODO
+
+				// CPU_CODE_LSR_ACCUMULATOR
+				// TODO
+
+				// CPU_CODE_LSR_ZERO_PAGE
+				// TODO
+
+				// CPU_CODE_LSR_ZERO_PAGE_X
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
 		_nes_test_cpu::execute_nop(
 			__in void *context
 			)
@@ -5147,6 +5456,98 @@ exit:
 		}
 
 		nes_test_t 
+		_nes_test_cpu::execute_rol(
+			__in void *context
+			)
+		{
+			nes_cpu_ptr inst = NULL;
+			//nes_cpu_state st = { 0 };
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_cpu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// CPU_CODE_ROL_ABSOLUTE
+				// TODO
+
+				// CPU_CODE_ROL_ABSOLUTE_X
+				// TODO
+
+				// CPU_CODE_ROL_ACCUMULATOR
+				// TODO
+
+				// CPU_CODE_ROL_ZERO_PAGE
+				// TODO
+
+				// CPU_CODE_ROL_ZERO_PAGE_X
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_cpu::execute_ror(
+			__in void *context
+			)
+		{
+			nes_cpu_ptr inst = NULL;
+			//nes_cpu_state st = { 0 };
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_cpu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// CPU_CODE_ROR_ABSOLUTE
+				// TODO
+
+				// CPU_CODE_ROR_ABSOLUTE_X
+				// TODO
+
+				// CPU_CODE_ROR_ACCUMULATOR
+				// TODO
+
+				// CPU_CODE_ROR_ZERO_PAGE
+				// TODO
+
+				// CPU_CODE_ROR_ZERO_PAGE_X
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
 		_nes_test_cpu::execute_rti(
 			__in void *context
 			)
@@ -5252,6 +5653,61 @@ exit:
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_cpu::execute_sbc(
+			__in void *context
+			)
+		{
+			nes_cpu_ptr inst = NULL;
+			//nes_cpu_state st = { 0 };
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			if(!context) {
+				goto exit;
+			}
+
+			inst = (nes_cpu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// CPU_CODE_SBC_ABSOLUTE
+				// TODO
+
+				// CPU_CODE_SBC_ABSOLUTE_X
+				// TODO
+
+				// CPU_CODE_SBC_ABSOLUTE_Y
+				// TODO
+
+				// CPU_CODE_SBC_IMMEDIATE
+				// TODO
+
+				// CPU_CODE_SBC_INDIRECT_X
+				// TODO
+
+				// CPU_CODE_SBC_INDIRECT_Y
+				// TODO
+
+				// CPU_CODE_SBC_ZERO_PAGE
+				// TODO
+
+				// CPU_CODE_SBC_ZERO_PAGE_X
+				// TODO
+
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;

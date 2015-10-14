@@ -70,6 +70,14 @@ namespace NES {
 
 				static void _delete(void);
 
+				uint8_t bcd_in(
+					__in uint8_t value
+					);
+
+				uint8_t bcd_out(
+					__in uint8_t value
+					);
+
 				void execute_adc(
 					__in uint8_t code
 					);

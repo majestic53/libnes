@@ -51,7 +51,15 @@ namespace NES {
 					__in void *context
 					);
 
+				static nes_test_t execute_adc(
+					__in void *context
+					);
+
 				static nes_test_t execute_and(
+					__in void *context
+					);
+
+				static nes_test_t execute_asl(
 					__in void *context
 					);
 
@@ -111,6 +119,18 @@ namespace NES {
 					__in void *context
 					);
 
+				static nes_test_t execute_cmp(
+					__in void *context
+					);
+
+				static nes_test_t execute_cpx(
+					__in void *context
+					);
+
+				static nes_test_t execute_cpy(
+					__in void *context
+					);
+
 				static nes_test_t execute_dec(
 					__in void *context
 					);
@@ -159,6 +179,10 @@ namespace NES {
 					__in void *context
 					);
 
+				static nes_test_t execute_lsr(
+					__in void *context
+					);
+
 				static nes_test_t execute_nop(
 					__in void *context
 					);
@@ -183,11 +207,23 @@ namespace NES {
 					__in void *context
 					);
 
+				static nes_test_t execute_rol(
+					__in void *context
+					);
+
+				static nes_test_t execute_ror(
+					__in void *context
+					);
+
 				static nes_test_t execute_rti(
 					__in void *context
 					);
 
 				static nes_test_t execute_rts(
+					__in void *context
+					);
+
+				static nes_test_t execute_sbc(
 					__in void *context
 					);
 

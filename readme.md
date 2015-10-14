@@ -13,6 +13,11 @@ Changelog
 =========
 
 ##Version 0.1.1542
+*Updated:10/13/2015*
+
+* Added all remaining commands
+* Added test cases (partial)
+
 *Updated:10/12/2015*
 
 * Added inc/dec and binary operation commands

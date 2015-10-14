@@ -26,6 +26,7 @@ namespace NES {
 
 	namespace COMP {
 
+		#define CPU_BCD_MAX 99
 		#define CPU_CYCLES_INIT 0
 		#define CPU_FLAG_BREAKPOINT 0x10
 		#define CPU_FLAG_CARRY 0x1
