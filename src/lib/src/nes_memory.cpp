@@ -204,6 +204,31 @@ namespace NES {
 			m_block.resize(NES_MEMORY_MAX + 1, 0);
 		}
 
+		std::string 
+		_nes_memory::flag_as_string(
+			__in uint8_t flag,
+			__in_opt bool verbose
+			)
+		{
+			std::stringstream result;
+			uint8_t iter = BITS_PER_BYTE, value = flag;
+
+			result << "[";
+
+			while(iter--) {
+				result << ((value & 0x80) ? "1" : "0");
+				value <<= 1;
+			}
+
+			result << "]";
+
+			if(verbose) {
+				result << " (" << VALUE_AS_HEX(uint8_t, flag) << ")";
+			}
+
+			return result.str();		
+		}
+
 		bool 
 		_nes_memory::flag_check(
 			__in uint16_t address,

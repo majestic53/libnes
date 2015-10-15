@@ -58,6 +58,11 @@ namespace NES {
 
 				void clear(void);
 
+				static std::string flag_as_string(
+					__in uint8_t flag,
+					__in_opt bool verbose = false
+					);
+
 				bool flag_check(
 					__in uint16_t address,
 					__in uint8_t flag

@@ -140,7 +140,7 @@ namespace NES {
 			switch(code) {
 				case CPU_CODE_ADC_ABSOLUTE:
 					orig = load(operand(CPU_MODE_ABSOLUTE, boundary));
-					m_cycles += CPU_CODE_ADC_ABSOLUTE_CYLCES;
+					m_cycles += CPU_CODE_ADC_ABSOLUTE_CYCLES;
 					break;
 				case CPU_CODE_ADC_ABSOLUTE_X:
 					orig = load(operand(CPU_MODE_ABSOLUTE_X, boundary));
@@ -149,7 +149,7 @@ namespace NES {
 						++m_cycles;
 					}
 
-					m_cycles += CPU_CODE_ADC_ABSOLUTE_X_CYLCES;
+					m_cycles += CPU_CODE_ADC_ABSOLUTE_X_CYCLES;
 					break;
 				case CPU_CODE_ADC_ABSOLUTE_Y:
 					orig = load(operand(CPU_MODE_ABSOLUTE_Y, boundary));
@@ -158,15 +158,15 @@ namespace NES {
 						++m_cycles;
 					}
 
-					m_cycles += CPU_CODE_ADC_ABSOLUTE_Y_CYLCES;
+					m_cycles += CPU_CODE_ADC_ABSOLUTE_Y_CYCLES;
 					break;
 				case CPU_CODE_ADC_IMMEDIATE:
 					orig = operand(CPU_MODE_IMMEDIATE, boundary);
-					m_cycles += CPU_CODE_ADC_IMMEDIATE_CYLCES;
+					m_cycles += CPU_CODE_ADC_IMMEDIATE_CYCLES;
 					break;
 				case CPU_CODE_ADC_INDIRECT_X:
 					orig = load(operand(CPU_MODE_INDIRECT_X, boundary));
-					m_cycles += CPU_CODE_ADC_INDIRECT_X_CYLCES;
+					m_cycles += CPU_CODE_ADC_INDIRECT_X_CYCLES;
 					break;
 				case CPU_CODE_ADC_INDIRECT_Y:
 					orig = load(operand(CPU_MODE_INDIRECT_Y, boundary));
@@ -175,15 +175,15 @@ namespace NES {
 						++m_cycles;
 					}
 
-					m_cycles += CPU_CODE_ADC_INDIRECT_Y_CYLCES;
+					m_cycles += CPU_CODE_ADC_INDIRECT_Y_CYCLES;
 					break;
 				case CPU_CODE_ADC_ZERO_PAGE:
 					orig = load(operand(CPU_MODE_ZERO_PAGE, boundary));
-					m_cycles += CPU_CODE_ADC_ZERO_PAGE_CYLCES;
+					m_cycles += CPU_CODE_ADC_ZERO_PAGE_CYCLES;
 					break;
 				case CPU_CODE_ADC_ZERO_PAGE_X:
 					orig = load(operand(CPU_MODE_ZERO_PAGE_X, boundary));
-					m_cycles += CPU_CODE_ADC_ZERO_PAGE_X_CYLCES;
+					m_cycles += CPU_CODE_ADC_ZERO_PAGE_X_CYCLES;
 					break;
 				default:
 					THROW_NES_CPU_EXCEPTION_MESSAGE(NES_CPU_EXCEPTION_EXPECTING_ADC_CODE,
@@ -199,7 +199,7 @@ namespace NES {
 			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
 
 			if(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_DECIMAL)) {
-				value = (bcd_in(m_register_a) + bcd_in(orig) 
+				value = (bcd_out(m_register_a) + bcd_out(orig) 
 					+ (CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY) ? 1 : 0));
 				CPU_FLAG_SET_CONDITIONAL(value > CPU_BCD_MAX, m_register_p, 
 					CPU_FLAG_CARRY);
@@ -1414,14 +1414,14 @@ namespace NES {
 			}
 
 			if(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_DECIMAL)) {
-				value = (bcd_in(m_register_a) - bcd_in(value) 
+				value = (bcd_out(m_register_a) - bcd_out(value) 
 					- (CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY) ? 0 : 1));
-				CPU_FLAG_SET_CONDITIONAL(((((int8_t) value) > CPU_BCD_MAX) || (((int8_t) value) < 0)), 
+				CPU_FLAG_SET_CONDITIONAL((((int8_t) value) > CPU_BCD_MAX) || (((int8_t) value) < 0), 
 					m_register_p, CPU_FLAG_OVERFLOW);
 			} else {
 				value = (m_register_a - value - (CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY) 
 					? 0 : 1));
-				CPU_FLAG_SET_CONDITIONAL(((((int8_t) value) > INT8_MAX) || (((int8_t) value) < INT8_MIN)), 
+				CPU_FLAG_SET_CONDITIONAL((((int8_t) value) > INT8_MAX) || (((int8_t) value) < INT8_MIN), 
 					m_register_p, CPU_FLAG_OVERFLOW);
 			}
 
