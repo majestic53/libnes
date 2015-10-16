@@ -13,6 +13,10 @@ Changelog
 =========
 
 ##Version 0.1.1542
+*Updated:10/15/2015*
+
+* Added all remaining test cases
+
 *Updated:10/14/2015*
 
 * Added adc/sbc test cases

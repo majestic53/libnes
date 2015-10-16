@@ -293,7 +293,7 @@ namespace NES {
 				case CPU_CODE_ASL_ABSOLUTE:
 					address = operand(CPU_MODE_ABSOLUTE, boundary);
 					value = load(address);
-					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE), 
 						m_register_p, CPU_FLAG_CARRY);
 					value = ((value << 1) & (UINT8_MAX - 1));
 					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
@@ -305,7 +305,7 @@ namespace NES {
 				case CPU_CODE_ASL_ABSOLUTE_X:
 					address = operand(CPU_MODE_ABSOLUTE_X, boundary);
 					value = load(address);
-					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE), 
 						m_register_p, CPU_FLAG_CARRY);
 					value = ((value << 1) & (UINT8_MAX - 1));
 					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
@@ -316,7 +316,7 @@ namespace NES {
 					break;
 				case CPU_CODE_ASL_ACCUMULATOR:
 					value = operand(CPU_MODE_ACCUMULATOR, boundary);
-					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE), 
 						m_register_p, CPU_FLAG_CARRY);
 					value = ((value << 1) & (UINT8_MAX - 1));
 					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
@@ -328,7 +328,7 @@ namespace NES {
 				case CPU_CODE_ASL_ZERO_PAGE:
 					address = operand(CPU_MODE_ZERO_PAGE, boundary);
 					value = load(address);
-					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE), 
 						m_register_p, CPU_FLAG_CARRY);
 					value = ((value << 1) & (UINT8_MAX - 1));
 					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
@@ -340,7 +340,7 @@ namespace NES {
 				case CPU_CODE_ASL_ZERO_PAGE_X:
 					address = operand(CPU_MODE_ZERO_PAGE_X, boundary);
 					value = load(address);
-					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_CARRY), 
+					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE), 
 						m_register_p, CPU_FLAG_CARRY);
 					value = ((value << 1) & (UINT8_MAX - 1));
 					CPU_FLAG_SET_CONDITIONAL(CPU_FLAG_CHECK(value, CPU_FLAG_NEGATIVE),
