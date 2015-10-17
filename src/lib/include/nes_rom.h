@@ -45,7 +45,8 @@ namespace NES {
 				nes_rom_header header(void);
 
 				static std::string header_as_string(
-					__in const nes_rom_header &header
+					__in const nes_rom_header &header,
+					__in_opt bool verbose = false
 					);
 
 				void initialize(void);
@@ -55,6 +56,10 @@ namespace NES {
 				bool is_initialized(void);
 
 				bool is_loaded(void);
+
+				void load(
+					__in const nes_memory_block &block
+					);
 
 				void load(
 					__in const std::string &input
@@ -84,13 +89,17 @@ namespace NES {
 
 				static void _delete(void);
 
+				static bool validate(
+					__in const nes_rom_header &header
+					);
+
+				nes_memory_block m_block;
+
 				bool m_initialized;
 
 				static _nes_rom *m_instance;
 
 				bool m_loaded;
-
-				nes_memory_block m_rom;
 
 			private:
 

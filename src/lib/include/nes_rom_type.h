@@ -36,20 +36,26 @@ namespace NES {
 
 		enum {
 			NES_ROM_EXCEPTION_ALLOCATED = 0,
+			NES_ROM_EXCEPTION_FILE_NOT_FOUND,
 			NES_ROM_EXCEPTION_INITIALIZED,
+			NES_ROM_EXCEPTION_INVALID_INDEX,
 			NES_ROM_EXCEPTION_MALFORMED,
 			NES_ROM_EXCEPTION_UNINITIALIZED,
 			NES_ROM_EXCEPTION_UNLOADED,
+			NES_ROM_EXCEPTION_UNSUPPORTED,
 		};
 
-		#define NES_ROM_EXCEPTION_MAX NES_ROM_EXCEPTION_UNLOADED
+		#define NES_ROM_EXCEPTION_MAX NES_ROM_EXCEPTION_UNSUPPORTED
 
 		static const std::string NES_ROM_EXCEPTION_STR[] = {
 			"Failed to allocate rom component",
+			"File does not exist",
 			"Rom component is initialized",
+			"Invalid rom index",
 			"Rom is malformed",
 			"Rom component is uninitialized",
 			"Rom component is unloaded",
+			"Rom format is unsupported",
 			};
 
 		#define NES_ROM_EXCEPTION_STRING(_TYPE_) \

@@ -85,7 +85,7 @@ namespace NES {
 			high = (value / 10);
 			low = (value % 10);
 
-			return (((high << 4) & 0xf0) | (low & 0xf));
+			return (((high << BITS_PER_NIBBLE) & 0xf0) | (low & 0xf));
 		}
 
 		uint8_t 

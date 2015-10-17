@@ -13,6 +13,10 @@ Changelog
 =========
 
 ##Version 0.1.1542
+*Updated:10/17/2015*
+
+* Added rom class (complete)
+
 *Updated:10/16/2015*
 
 * Added rom class (partial)

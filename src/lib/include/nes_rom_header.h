@@ -22,41 +22,50 @@
 
 namespace NES {
 
+	#define RAM_PROGRAM_LEN 0x2000
 	#define ROM_INES_2 2
 	#define ROM_INES_2_RES_LEN 2
 	#define ROM_INES_RES_LEN 5
 	#define ROM_MAGIC "\x4E\x45\x53\x1A"
 	#define ROM_MAGIC_LEN 4
-	#define ROM_RAM_PROGRAM_LEN 0x2000
-	#define ROM_ROM_CHARACTER_LEN 0x2000
-	#define ROM_ROM_PROGRAM_LEN 0x4000
+	#define ROM_CHARACTER_LEN 0x2000
+	#define ROM_PROGRAM_LEN 0x4000
+	#define ROM_TRAINER_LEN 0x200
 
 	enum {
 		FLAG_6_MIRRORING_HORZ = 0,
 		FLAG_6_MIRRORING_VERT,
 	};
 
+	#define FLAG_6_MIRRORING_MAX FLAG_6_MIRRORING_VERT
+
 	enum {
 		FLAG_9_1_TV_MODE_NTSC = 0,
 		FLAG_9_1_TV_MODE_PAL,
 	};
+
+	#define FLAG_9_1_TV_MODE_MAX FLAG_9_1_TV_MODE_PAL
 
 	enum {
 		FLAG_10_1_TV_MODE_NTSC = 0,
 		FLAG_10_1_TV_MODE_PAL = 2,
 	};
 
+	#define FLAG_10_1_TV_MODE_MAX FLAG_10_1_TV_MODE_PAL
+
 	enum {
 		FLAG_12_2_TV_MODE_NTSC = 0,
 		FLAG_12_2_TV_MODE_PAL = 1,
 	};
+
+	#define FLAG_12_2_TV_MODE_MAX FLAG_12_2_TV_MODE_PAL
 
 	typedef struct {
 		uint8_t mirroring : 1;			// mirroring (0=horz, 1=vert)
 		uint8_t sram : 1;			// sram present
 		uint8_t trainer : 1;			// trainer present
 		uint8_t four_screen_mode : 1;		// four-screen mode active
-		uint8_t mapper_lower : 4;		// mapper low nibble
+		uint8_t mapper_low : 4;			// mapper low nibble
 	} nes_rom_header_flag_6;
 
 	typedef struct {
@@ -79,7 +88,7 @@ namespace NES {
 	} nes_rom_header_flag_10_1;
 
 	typedef struct {
-		uint8_t mapper_highest : 4;		// mapper highest nibble
+		uint8_t mapper_high : 4;		// mapper highest nibble
 		uint8_t mapper_sub : 4;			// submapper
 	} nes_rom_header_flag_8_2;
 

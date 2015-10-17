@@ -53,6 +53,7 @@ namespace NES {
 	#endif // __out_opt
 
 	#define BITS_PER_BYTE (8)
+	#define BITS_PER_NIBBLE (4)
 	#define BLOCK_WIDTH (0x10)
 	#define BYTES_PER_KBYTE (1024.0)
 
@@ -64,7 +65,7 @@ namespace NES {
 
 	#define VERSION_MAJ 0
 	#define VERSION_MIN 1
-	#define VERSION_REV 4
+	#define VERSION_REV 5
 	#define VERSION_WEEK 1542
 
 	#define CHECK_STR(_STR_) (!_STR_.empty() ? _STR_.c_str() : EMPTY)
