@@ -118,6 +118,21 @@ namespace NES {
 		return m_initialized;
 	}
 
+	void 
+	_nes::run(
+		__in const std::string &input,
+		__in_opt bool debug
+		)
+	{
+		ATOMIC_CALL_RECUR(m_lock);
+
+		if(!m_initialized) {
+			THROW_NES_EXCEPTION(NES_EXCEPTION_UNINITIALIZED);
+		}
+
+		// TODO: run session
+	}
+
 #ifndef NDEBUG
 	bool 
 	_nes::run_tests(
@@ -141,6 +156,9 @@ namespace NES {
 		nes_test_set test_set_cpu = nes_test_cpu::set_generate();
 		test_set_cpu.run_all(success, failure, inconclusive);
 		stream << test_set_cpu.to_string() << std::endl;
+		nes_test_set test_set_rom = nes_test_rom::set_generate();
+		test_set_rom.run_all(success, failure, inconclusive);
+		stream << test_set_rom.to_string() << std::endl;
 
 		// TODO: run test sets
 

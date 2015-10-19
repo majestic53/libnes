@@ -41,6 +41,7 @@ using namespace NES;
 #include "nes_test.h"
 #include "nes_test_cpu.h"
 #include "nes_test_memory.h"
+#include "nes_test_rom.h"
 
 using namespace NES::TEST;
 #endif // NDEBUG
@@ -76,6 +77,11 @@ namespace NES {
 			static bool is_allocated(void);
 
 			bool is_initialized(void);
+
+			void run(
+				__in const std::string &input,
+				__in_opt bool debug = false
+				);
 
 #ifndef NDEBUG
 			static bool run_tests(

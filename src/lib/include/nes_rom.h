@@ -77,6 +77,10 @@ namespace NES {
 
 			protected:
 
+#ifndef NDEBUG
+				friend class NES::TEST::_nes_test_rom;
+#endif // NDEBUG
+
 				_nes_rom(void);
 
 				_nes_rom(

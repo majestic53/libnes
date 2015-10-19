@@ -13,6 +13,10 @@ Changelog
 =========
 
 ##Version 0.1.1542
+*Updated:10/18/2015*
+
+* Added rom class test cases (partial)
+
 *Updated:10/17/2015*
 
 * Added rom class (complete)
@@ -37,38 +41,6 @@ Changelog
 *Updated:10/12/2015*
 
 * Added inc/dec and binary operation commands
-
-##Version 0.1.1541
-*Updated:10/11/2015*
-
-* Added additional commands
-
-*Updated:10/10/2015*
-
-* Added jump commands/test cases
-
-*Updated:10/9/2015*
-
-* Added additional test cases
-
-*Updated:10/8/2015*
-
-* Fixed addressing modes
-* Added additional test cases
-
-*Updated:10/7/2015*
-
-* Added additional test cases
-
-*Updated:10/6/2015*
-
-* Added support for all addressing modes
-* Added additional commands
-
-*Updated:10/4/2015*
-
-* Added command test cases (partial)
-* Fixed interrupt code
 
 *Changelog truncated (see file history for full log)*
 
