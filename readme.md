@@ -12,6 +12,11 @@ Table of Contents
 Changelog
 =========
 
+##Version 0.1.1543
+*Updated:10/19/2015*
+
+* Added rom class test cases (complete)
+
 ##Version 0.1.1542
 *Updated:10/18/2015*
 

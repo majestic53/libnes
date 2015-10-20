@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <fstream>
 #include "../include/nes.h"
 #include "../include/nes_rom_header.h"
 #include "../include/nes_rom_type.h"
@@ -27,11 +28,15 @@ namespace NES {
 
 	namespace TEST {
 
+		#define NES_TEST_ROM_BANKS_CHARACTER 1
+		#define NES_TEST_ROM_BANKS_PROGRAM 2
 		#define NES_TEST_ROM_INDEX_ZERO 0
 		#define NES_TEST_ROM_INDEX_INVALID 10
 		#define NES_TEST_ROM_PATH_INVALID "./test/rom_invalid.nes"
 		#define NES_TEST_ROM_PATH_VALID_BANKS "./test/rom_valid_banks.nes"
+		#define NES_TEST_ROM_PATH_VALID_BANKS_LEN 40976
 		#define NES_TEST_ROM_PATH_VALID_HEADER "./test/rom_valid_header.nes"
+		#define NES_TEST_ROM_PATH_VALID_HEADER_LEN 16
 
 		enum {
 			NES_TEST_ROM_ACQUIRE = 0,
@@ -119,8 +124,9 @@ exit:
 			__in void *context
 			)
 		{
-			nes_memory_block blk;
 			nes_rom_ptr inst = NULL;
+			size_t ch_iter, iter = 0;
+			nes_memory_block blk, blk_test;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			try {
@@ -156,11 +162,46 @@ exit:
 				}
 
 				if(!inst->is_loaded()) {
-					inst->load(NES_TEST_ROM_PATH_VALID_HEADER);
+					inst->load(NES_TEST_ROM_PATH_VALID_BANKS);
 				}
 
-				// TODO
+				for(; iter < NES_TEST_ROM_BANKS_CHARACTER; ++iter) {
 
+					if(inst->block_character(blk, iter) != ROM_CHARACTER_LEN) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+
+					std::ifstream file(NES_TEST_ROM_PATH_VALID_BANKS, 
+						std::ios::in | std::ios::binary);
+
+					if(!file) {
+						result = NES_TEST_INCONCLUSIVE;
+						file.close();
+						goto exit;
+					}
+
+					blk_test.resize(ROM_CHARACTER_LEN);
+					file.seekg((ROM_CHARACTER_LEN * iter) 
+						+ (ROM_PROGRAM_LEN * NES_TEST_ROM_BANKS_PROGRAM) 
+						+ sizeof(nes_rom_header), std::ios::beg);
+					file.read((char *) &blk_test[0], ROM_CHARACTER_LEN);
+					file.close();
+
+					for(ch_iter = 0; ch_iter < blk_test.size(); ++ch_iter) {
+
+						if(blk.at(ch_iter) != blk_test.at(ch_iter)) {
+							result = NES_TEST_FAILURE;
+							goto exit;
+						}
+					}
+				}
+
+				try {
+					inst->block_character(blk, iter);
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -176,9 +217,10 @@ exit:
 		_nes_test_rom::block_program(
 			__in void *context
 			)
-		{
-			nes_memory_block blk;
+		{	
 			nes_rom_ptr inst = NULL;
+			size_t ch_iter, iter = 0;
+			nes_memory_block blk, blk_test;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
 			try {
@@ -214,11 +256,45 @@ exit:
 				}
 
 				if(!inst->is_loaded()) {
-					inst->load(NES_TEST_ROM_PATH_VALID_HEADER);
+					inst->load(NES_TEST_ROM_PATH_VALID_BANKS);
 				}
 
-				// TODO
+				for(; iter < NES_TEST_ROM_BANKS_PROGRAM; ++iter) {
 
+					if(inst->block_program(blk, iter) != ROM_PROGRAM_LEN) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+
+					std::ifstream file(NES_TEST_ROM_PATH_VALID_BANKS, 
+						std::ios::in | std::ios::binary);
+
+					if(!file) {
+						result = NES_TEST_INCONCLUSIVE;
+						file.close();
+						goto exit;
+					}
+
+					blk_test.resize(ROM_PROGRAM_LEN);
+					file.seekg((ROM_PROGRAM_LEN * iter) + sizeof(nes_rom_header), 
+						std::ios::beg);
+					file.read((char *) &blk_test[0], ROM_PROGRAM_LEN);
+					file.close();
+
+					for(ch_iter = 0; ch_iter < blk_test.size(); ++ch_iter) {
+
+						if(blk.at(ch_iter) != blk_test.at(ch_iter)) {
+							result = NES_TEST_FAILURE;
+							goto exit;
+						}
+					}
+				}
+
+				try {
+					inst->block_program(blk, iter);
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -235,7 +311,9 @@ exit:
 			__in void *context
 			)
 		{
+			size_t iter = 0;
 			nes_rom_header head;
+			nes_memory_block blk;
 			nes_rom_ptr inst = NULL;
 			nes_test_t result = NES_TEST_INCONCLUSIVE;
 
@@ -252,7 +330,7 @@ exit:
 				}
 
 				try {
-					head = inst->header();
+					inst->header(head);
 					result = NES_TEST_FAILURE;
 					goto exit;
 				} catch(...) { }
@@ -261,8 +339,28 @@ exit:
 					inst->initialize();
 				}
 
-				// TODO
+				inst->load(NES_TEST_ROM_PATH_VALID_HEADER);
+				inst->header(head);
+				std::ifstream file(NES_TEST_ROM_PATH_VALID_HEADER, 
+					std::ios::in | std::ios::binary);
 
+				if(!file) {
+					result = NES_TEST_INCONCLUSIVE;
+					file.close();
+					goto exit;
+				}
+
+				blk.resize(sizeof(nes_rom_header));
+				file.read((char *) &blk[0], sizeof(nes_rom_header));
+				file.close();
+
+				for(; iter < sizeof(nes_rom_header); ++iter) {
+
+					if(((uint8_t *) &head)[iter] != blk.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -296,8 +394,12 @@ exit:
 					goto exit;
 				} catch(...) { }
 
-				// TODO
-
+				if(!inst->is_allocated() || !inst->is_initialized() 
+						|| inst->is_loaded() 
+						|| !inst->m_block.empty()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -452,8 +554,19 @@ exit:
 					inst->initialize();
 				}
 
-				// TODO
+				try {
+					inst->load(NES_TEST_ROM_PATH_INVALID);
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
 
+				inst->load(NES_TEST_ROM_PATH_VALID_BANKS);
+
+				if(!inst->is_loaded()
+						|| (inst->size() != NES_TEST_ROM_PATH_VALID_BANKS_LEN)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -511,8 +624,17 @@ exit:
 					inst->initialize();
 				}
 
-				// TODO
+				if(inst->size()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 
+				inst->load(NES_TEST_ROM_PATH_VALID_BANKS);
+
+				if(inst->size() != NES_TEST_ROM_PATH_VALID_BANKS_LEN) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -616,8 +738,14 @@ exit:
 					inst->initialize();
 				}
 
-				// TODO
+				inst->uninitialize();
 
+				if(!inst->is_allocated() || inst->is_initialized() 
+						|| inst->is_loaded() 
+						|| !inst->m_block.empty()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
@@ -659,8 +787,14 @@ exit:
 					inst->load(NES_TEST_ROM_PATH_VALID_HEADER);
 				}
 
-				// TODO
+				inst->unload();
 
+				if(!inst->is_allocated() || !inst->is_initialized() 
+						|| inst->is_loaded() 
+						|| !inst->m_block.empty()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;

@@ -33,16 +33,18 @@ namespace NES {
 				static _nes_rom *acquire(void);
 
 				size_t block_character(
-					__in nes_memory_block &block,
+					__out nes_memory_block &block,
 					__in size_t index
 					);
 
 				size_t block_program(
-					__in nes_memory_block &block,
+					__out nes_memory_block &block,
 					__in size_t index
 					);
 
-				nes_rom_header header(void);
+				size_t header(
+					__out nes_rom_header &head
+					);
 
 				static std::string header_as_string(
 					__in const nes_rom_header &header,

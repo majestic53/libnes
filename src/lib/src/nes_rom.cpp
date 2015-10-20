@@ -106,7 +106,7 @@ namespace NES {
 
 		size_t 
 		_nes_rom::block_character(
-			__in nes_memory_block &block,
+			__out nes_memory_block &block,
 			__in size_t index
 			)
 		{
@@ -123,7 +123,7 @@ namespace NES {
 				THROW_NES_ROM_EXCEPTION(NES_ROM_EXCEPTION_UNLOADED);
 			}
 
-			head = header();
+			header(head);
 			blocks = head.rom_character;
 
 			if(index >= blocks) {
@@ -152,7 +152,7 @@ namespace NES {
 
 		size_t 
 		_nes_rom::block_program(
-			__in nes_memory_block &block,
+			__out nes_memory_block &block,
 			__in size_t index
 			)
 		{
@@ -169,7 +169,7 @@ namespace NES {
 				THROW_NES_ROM_EXCEPTION(NES_ROM_EXCEPTION_UNLOADED);
 			}
 
-			head = header();
+			header(head);
 			blocks = head.rom_program;
 
 			if(index >= blocks) {
@@ -195,10 +195,12 @@ namespace NES {
 			return block.size();
 		}
 
-		nes_rom_header 
-		_nes_rom::header(void)
+		size_t 
+		_nes_rom::header(
+			__out nes_rom_header &head
+			)
 		{
-			nes_rom_header result;
+			size_t result;
 
 			ATOMIC_CALL_RECUR(m_lock);
 
@@ -214,7 +216,9 @@ namespace NES {
 				THROW_NES_ROM_EXCEPTION(NES_ROM_EXCEPTION_MALFORMED);
 			}
 
-			std::memcpy(&result, &m_block[0], sizeof(nes_rom_header));
+			result = sizeof(nes_rom_header);
+			std::memcpy((uint8_t *) &head, (uint8_t *) &m_block[0], 
+				result);
 
 			return result;
 		}
@@ -350,12 +354,7 @@ namespace NES {
 		_nes_rom::is_loaded(void)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-
-			if(!m_initialized) {
-				THROW_NES_ROM_EXCEPTION(NES_ROM_EXCEPTION_UNINITIALIZED);
-			}
-
-			return m_loaded;
+			return (m_initialized && m_loaded);
 		}
 
 		void 
@@ -363,6 +362,8 @@ namespace NES {
 			__in const nes_memory_block &block
 			)
 		{
+			nes_rom_header head;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			if(!m_initialized) {
@@ -375,13 +376,14 @@ namespace NES {
 
 			m_block = block;
 			m_loaded = true;
+			header(head);
 
-			if(header().flag_7.format == ROM_INES_2) {
-				THROW_NES_ROM_EXCEPTION(NES_ROM_EXCEPTION_UNSUPPORTED);
+			if(!validate(head)) {
+				THROW_NES_ROM_EXCEPTION(NES_ROM_EXCEPTION_MALFORMED);
 			}
 
-			if(!validate(header())) {
-				THROW_NES_ROM_EXCEPTION(NES_ROM_EXCEPTION_MALFORMED);
+			if(head.flag_7.format == ROM_INES_2) {
+				THROW_NES_ROM_EXCEPTION(NES_ROM_EXCEPTION_UNSUPPORTED);
 			}
 		}
 
@@ -431,6 +433,7 @@ namespace NES {
 			__in_opt bool verbose
 			)
 		{
+			nes_rom_header head;
 			std::stringstream result;
 
 			ATOMIC_CALL_RECUR(m_lock);
@@ -448,7 +451,8 @@ namespace NES {
 			result << ")";
 
 			if(m_initialized && m_loaded) {
-				result << std::endl << nes_rom::header_as_string(header(), verbose);
+				header(head);
+				result << std::endl << nes_rom::header_as_string(head, verbose);
 			}
 
 			return result.str();
