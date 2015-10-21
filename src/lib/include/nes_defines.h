@@ -65,15 +65,19 @@ namespace NES {
 
 	#define VERSION_MAJ 0
 	#define VERSION_MIN 1
-	#define VERSION_REV 1
+	#define VERSION_REV 2
 	#define VERSION_WEEK 1543
 
 	#define CHECK_STR(_STR_) (!_STR_.empty() ? _STR_.c_str() : EMPTY)
 
 	#define INVALID_TYPE(_TYPE_) ((_TYPE_) -1)
 
+#ifndef NDEBUG
 	#define _ATOMIC_CALL(_TYPE_, _MUTEX_) \
 		std::lock_guard<_TYPE_> __LOCK ## _MUTEX_(_MUTEX_)
+#else
+	#define _ATOMIC_CALL(_TYPE_, _MUTEX_)
+#endif // NDEBUG
 	#define ATOMIC_CALL(_MUTEX_) \
 		_ATOMIC_CALL(std::mutex, _MUTEX_)
 	#define ATOMIC_CALL_RECUR(_MUTEX_) \

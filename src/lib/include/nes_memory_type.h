@@ -26,7 +26,9 @@ namespace NES {
 
 	namespace COMP {
 
-		#define NES_MEMORY_MAX UINT16_MAX
+		#define NES_MMU_MAX UINT16_MAX
+		#define NES_PPU_MAX 0x3fff
+		#define NES_PPU_OAM_MAX UINT8_MAX
 
 		#define NES_MEMORY_HEADER NES_HEADER "::MEM"
 
@@ -39,6 +41,7 @@ namespace NES {
 		enum {
 			NES_MEMORY_EXCEPTION_ALLOCATED = 0,
 			NES_MEMORY_EXCEPTION_INVALID_ADDRESS,
+			NES_MEMORY_EXCEPTION_INVALID_TYPE,
 			NES_MEMORY_EXCEPTION_INITIALIZED,
 			NES_MEMORY_EXCEPTION_UNINITIALIZED,
 		};
@@ -48,6 +51,7 @@ namespace NES {
 		static const std::string NES_MEMORY_EXCEPTION_STR[] = {
 			"Failed to allocate memory component",
 			"Invalid memory address",
+			"Invalid memory type",
 			"Memory component is initialized",
 			"Memory component is uninitialized",
 			};

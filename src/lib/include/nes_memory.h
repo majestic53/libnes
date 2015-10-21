@@ -24,6 +24,12 @@ namespace NES {
 
 	namespace COMP {
 
+		typedef enum {
+			NES_MEM_MMU = 0,
+			NES_MEM_PPU,
+			NES_MEM_PPU_OAM,
+		} nes_memory_t;
+
 		typedef std::vector<uint8_t> nes_memory_block;
 
 		typedef class _nes_memory {
@@ -35,6 +41,7 @@ namespace NES {
 				static _nes_memory *acquire(void);
 
 				std::string address_as_string(
+					__in nes_memory_t type,
 					__in uint16_t address,
 					__in_opt bool verbose = false
 					);
@@ -46,6 +53,7 @@ namespace NES {
 					);
 
 				uint8_t &at(
+					__in nes_memory_t type,
 					__in uint16_t address
 					);
 
@@ -64,16 +72,19 @@ namespace NES {
 					);
 
 				bool flag_check(
+					__in nes_memory_t type,
 					__in uint16_t address,
 					__in uint8_t flag
 					);
 
 				void flag_clear(
+					__in nes_memory_t type,
 					__in uint16_t address,
 					__in uint8_t flag
 					);
 
 				void flag_set(
+					__in nes_memory_t type,
 					__in uint16_t address,
 					__in uint8_t flag
 					);
@@ -85,12 +96,14 @@ namespace NES {
 				bool is_initialized(void);
 
 				uint16_t read(
+					__in nes_memory_t type,
 					__in uint16_t address,
 					__in uint16_t offset,
 					__out nes_memory_block &block
 					);
 
 				std::string to_string(
+					__in nes_memory_t type,
 					__in uint16_t address,
 					__in uint16_t offset,
 					__in_opt bool verbose = false
@@ -99,6 +112,7 @@ namespace NES {
 				void uninitialize(void);
 
 				uint16_t write(
+					__in nes_memory_t type,
 					__in uint16_t address,
 					__in const nes_memory_block &block
 					);
@@ -119,13 +133,13 @@ namespace NES {
 					__in const _nes_memory &other
 					);
 
-				static void _delete(void);
-
-				nes_memory_block m_block;
+				static void _delete(void);				
 
 				bool m_initialized;
 
 				static _nes_memory *m_instance;
+
+				nes_memory_block m_mmu, m_ppu, m_ppu_oam;
 
 			private:
 

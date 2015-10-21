@@ -41,6 +41,7 @@ using namespace NES;
 #include "nes_test.h"
 #include "nes_test_cpu.h"
 #include "nes_test_memory.h"
+#include "nes_test_ppu.h"
 #include "nes_test_rom.h"
 
 using namespace NES::TEST;
@@ -52,6 +53,7 @@ using namespace NES::TEST;
 
 #include "nes_memory.h"
 #include "nes_cpu.h"
+#include "nes_ppu.h"
 #include "nes_rom.h"
 
 using namespace NES::COMP;
@@ -69,6 +71,8 @@ namespace NES {
 			nes_cpu_ptr acquire_cpu(void);
 
 			nes_memory_ptr acquire_memory(void);
+
+			nes_ppu_ptr acquire_ppu(void);
 
 			nes_rom_ptr acquire_rom(void);
 
@@ -123,6 +127,8 @@ namespace NES {
 			nes_cpu_ptr m_instance_cpu;
 
 			nes_memory_ptr m_instance_memory;
+
+			nes_ppu_ptr m_instance_ppu;
 
 			nes_rom_ptr m_instance_rom;
 

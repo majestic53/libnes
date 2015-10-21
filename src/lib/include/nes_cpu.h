@@ -70,6 +70,7 @@ namespace NES {
 
 				static void _delete(void);
 
+#ifndef CPU_RP2A03
 				uint8_t bcd_in(
 					__in uint8_t value
 					);
@@ -77,6 +78,7 @@ namespace NES {
 				uint8_t bcd_out(
 					__in uint8_t value
 					);
+#endif // CPU_RP2A03
 
 				void execute_adc(
 					__in uint8_t code

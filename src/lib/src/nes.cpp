@@ -29,6 +29,7 @@ namespace NES {
 		m_initialized(false),
 		m_instance_cpu(nes_cpu::acquire()),
 		m_instance_memory(nes_memory::acquire()),
+		m_instance_ppu(nes_ppu::acquire()),
 		m_instance_rom(nes_rom::acquire())
 	{
 		std::atexit(nes::_delete);
@@ -81,6 +82,13 @@ namespace NES {
 		return m_instance_memory;
 	}
 
+	nes_ppu_ptr 
+	_nes::acquire_ppu(void)
+	{
+		ATOMIC_CALL_RECUR(m_lock);
+		return m_instance_ppu;
+	}
+
 	nes_rom_ptr 
 	_nes::acquire_rom(void)
 	{
@@ -100,6 +108,7 @@ namespace NES {
 		m_initialized = true;
 		m_instance_memory->initialize();
 		m_instance_cpu->initialize();
+		m_instance_ppu->initialize();
 		m_instance_rom->initialize();
 
 		// TODO: initialize components
@@ -156,6 +165,9 @@ namespace NES {
 		nes_test_set test_set_cpu = nes_test_cpu::set_generate();
 		test_set_cpu.run_all(success, failure, inconclusive);
 		stream << test_set_cpu.to_string() << std::endl;
+		nes_test_set test_set_ppu = nes_test_ppu::set_generate();
+		test_set_ppu.run_all(success, failure, inconclusive);
+		stream << test_set_ppu.to_string() << std::endl;
 		nes_test_set test_set_rom = nes_test_rom::set_generate();
 		test_set_rom.run_all(success, failure, inconclusive);
 		stream << test_set_rom.to_string() << std::endl;
@@ -198,8 +210,10 @@ namespace NES {
 		}
 
 		result << ")"
-			<< std::endl << m_instance_memory->to_string(address, offset, verbose)
+			<< std::endl << m_instance_memory->to_string(NES_MEM_MMU, 
+			address, offset, verbose)
 			<< std::endl << m_instance_cpu->to_string(verbose)
+			<< std::endl << m_instance_ppu->to_string(verbose)
 			<< std::endl << m_instance_rom->to_string(verbose);
 
 		// TODO: print components
@@ -217,6 +231,7 @@ namespace NES {
 		}
 
 		m_instance_rom->uninitialize();
+		m_instance_ppu->uninitialize();
 		m_instance_cpu->uninitialize();
 		m_instance_memory->uninitialize();
 

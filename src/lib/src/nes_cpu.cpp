@@ -73,6 +73,7 @@ namespace NES {
 			return nes_cpu::m_instance;
 		}
 
+#ifndef CPU_RP2A03
 		uint8_t 
 		_nes_cpu::bcd_in(
 			__in uint8_t value
@@ -96,6 +97,7 @@ namespace NES {
 			ATOMIC_CALL_RECUR(m_lock);
 			return ((((value & 0xf0) >> 4) * 10) + (value & 0xf));
 		}
+#endif // CPU_RPA203
 
 		void 
 		_nes_cpu::clear(void)
@@ -198,15 +200,19 @@ namespace NES {
 				CPU_FLAG_NEGATIVE);
 			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
 
+#ifndef CPU_RP2A03
 			if(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_DECIMAL)) {
 				value = (bcd_out(m_register_a) + bcd_out(orig) 
 					+ (CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY) ? 1 : 0));
 				CPU_FLAG_SET_CONDITIONAL(value > CPU_BCD_MAX, m_register_p, 
 					CPU_FLAG_CARRY);
 			} else {
+#endif // CPU_RP2A03
 				CPU_FLAG_SET_CONDITIONAL(value > UINT8_MAX, m_register_p, 
 					CPU_FLAG_CARRY);
+#ifndef CPU_RP2A03
 			}
+#endif // CPU_RP2A03
 
 			m_register_a = value;
 		}
@@ -468,9 +474,11 @@ namespace NES {
 				case CPU_CODE_CLC_IMPLIED:
 					CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_CARRY);
 					break;
+#ifndef CPU_RP2A03
 				case CPU_CODE_CLD_IMPLIED:
 					CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_DECIMAL);
 					break;
+#endif // CPU_RP2A03
 				case CPU_CODE_CLI_IMPLIED:
 					CPU_FLAG_CLEAR(m_register_p, CPU_FLAG_INTERRUPT_DISABLED);
 					break;
@@ -480,9 +488,11 @@ namespace NES {
 				case CPU_CODE_SEC_IMPLIED:
 					CPU_FLAG_SET(m_register_p, CPU_FLAG_CARRY);
 					break;
+#ifndef CPU_RP2A03
 				case CPU_CODE_SED_IMPLIED:
 					CPU_FLAG_SET(m_register_p, CPU_FLAG_DECIMAL);
 					break;
+#endif // CPU_RP2A03
 				case CPU_CODE_SEI_IMPLIED:
 					CPU_FLAG_SET(m_register_p, CPU_FLAG_INTERRUPT_DISABLED);
 					break;
@@ -1413,17 +1423,21 @@ namespace NES {
 						"0x%x", code);
 			}
 
+#ifndef CPU_RP2A03
 			if(CPU_FLAG_CHECK(m_register_p, CPU_FLAG_DECIMAL)) {
 				value = (bcd_out(m_register_a) - bcd_out(value) 
 					- (CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY) ? 0 : 1));
 				CPU_FLAG_SET_CONDITIONAL((((int8_t) value) > CPU_BCD_MAX) || (((int8_t) value) < 0), 
 					m_register_p, CPU_FLAG_OVERFLOW);
 			} else {
+#endif // CPU_RP2A03
 				value = (m_register_a - value - (CPU_FLAG_CHECK(m_register_p, CPU_FLAG_CARRY) 
 					? 0 : 1));
 				CPU_FLAG_SET_CONDITIONAL((((int8_t) value) > INT8_MAX) || (((int8_t) value) < INT8_MIN), 
 					m_register_p, CPU_FLAG_OVERFLOW);
+#ifndef CPU_RP2A03
 			}
+#endif // CPU_RP2A03
 
 			CPU_FLAG_SET_CONDITIONAL(((int8_t) value) >= 0, m_register_p, CPU_FLAG_CARRY);
 			CPU_FLAG_SET_CONDITIONAL(!value, m_register_p, CPU_FLAG_ZERO);
@@ -1662,7 +1676,7 @@ namespace NES {
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-			return m_memory->at(address);
+			return m_memory->at(NES_MEM_MMU, address);
 		}
 
 		uint16_t 
@@ -1873,12 +1887,15 @@ namespace NES {
 				case CPU_CODE_BRK_IMPLIED:
 					execute_brk(code);
 					break;
-				case CPU_CODE_CLC_IMPLIED:
 				case CPU_CODE_CLD_IMPLIED:
+				case CPU_CODE_SED_IMPLIED:
+#ifdef CPU_RP2A03
+					break;
+#endif // CPU_RP2A03
+				case CPU_CODE_CLC_IMPLIED:
 				case CPU_CODE_CLI_IMPLIED:
 				case CPU_CODE_CLV_IMPLIED:
 				case CPU_CODE_SEC_IMPLIED:
-				case CPU_CODE_SED_IMPLIED:
 				case CPU_CODE_SEI_IMPLIED:
 					execute_flag(code);
 					break;
@@ -2055,7 +2072,7 @@ namespace NES {
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-			m_memory->at(address) = value;
+			m_memory->at(NES_MEM_MMU, address) = value;
 		}
 
 		void 

@@ -22,6 +22,8 @@
 
 namespace NES {
 
+	#define CPU_RP2A03
+
 	typedef enum {
 		CPU_MODE_ABSOLUTE = 0,
 		CPU_MODE_ABSOLUTE_X,

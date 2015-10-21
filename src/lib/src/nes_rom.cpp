@@ -443,16 +443,16 @@ namespace NES {
 				<< (m_loaded ? "LOADED" : "UNLOADED");
 
 			if(verbose) {
-				result << ", sz. " << (m_block.size() / BYTES_PER_KBYTE) << " KB (" 
-					<< m_block.size() << " bytes), ptr. 0x" 
-					<< VALUE_AS_HEX(nes_rom_ptr, this);
+				result << "ptr. 0x" << VALUE_AS_HEX(nes_rom_ptr, this);
 			}
 
 			result << ")";
 
 			if(m_initialized && m_loaded) {
 				header(head);
-				result << std::endl << nes_rom::header_as_string(head, verbose);
+				result << ", SZ: " << (m_block.size() / BYTES_PER_KBYTE) << " KB (" 
+					<< m_block.size() << " BTYES)" << std::endl 
+					<< nes_rom::header_as_string(head, verbose);
 			}
 
 			return result.str();

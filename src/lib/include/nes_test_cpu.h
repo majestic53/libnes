@@ -107,9 +107,11 @@ namespace NES {
 					__in void *context
 					);
 
+#ifndef CPU_RP2A03
 				static nes_test_t execute_cld(
 					__in void *context
 					);
+#endif // CPU_RP2A03
 
 				static nes_test_t execute_cli(
 					__in void *context
@@ -231,9 +233,11 @@ namespace NES {
 					__in void *context
 					);
 
+#ifndef CPU_RP2A03
 				static nes_test_t execute_sed(
 					__in void *context
 					);
+#endif // CPU_RP2A03
 
 				static nes_test_t execute_sei(
 					__in void *context

@@ -30,7 +30,9 @@ namespace NES {
 		#define CPU_CYCLES_INIT 0
 		#define CPU_FLAG_BREAKPOINT 0x10
 		#define CPU_FLAG_CARRY 0x1
+#ifndef CPU_RP2A03
 		#define CPU_FLAG_DECIMAL 0x8
+#endif // CPU_RP2A03
 		#define CPU_FLAG_INTERRUPT_DISABLED 0x4
 		#define CPU_FLAG_NEGATIVE 0x80
 		#define CPU_FLAG_OVERFLOW 0x40

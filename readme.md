@@ -13,6 +13,13 @@ Changelog
 =========
 
 ##Version 0.1.1543
+*Updated:10/20/2015*
+
+* Added ppu class (partial)
+* Added ppu class tests (partial)
+* Added ppu/ppu_oam memory blocks
+* Added ppu/ppu_oam memory block tests
+
 *Updated:10/19/2015*
 
 * Added rom class test cases (complete)

@@ -62,7 +62,9 @@ namespace NES {
 			NES_TEST_CPU_EXECUTE_BVC,
 			NES_TEST_CPU_EXECUTE_BVS,
 			NES_TEST_CPU_EXECUTE_CLC,
+#ifndef CPU_RP2A03
 			NES_TEST_CPU_EXECUTE_CLD,
+#endif // CPU_RP2A03
 			NES_TEST_CPU_EXECUTE_CLI,
 			NES_TEST_CPU_EXECUTE_CLV,
 			NES_TEST_CPU_EXECUTE_CMP,
@@ -93,7 +95,9 @@ namespace NES {
 			NES_TEST_CPU_EXECUTE_RTS,
 			NES_TEST_CPU_EXECUTE_SBC,
 			NES_TEST_CPU_EXECUTE_SEC,
+#ifndef CPU_RP2A03
 			NES_TEST_CPU_EXECUTE_SED,
+#endif // CPU_RP2A03
 			NES_TEST_CPU_EXECUTE_SEI,
 			NES_TEST_CPU_EXECUTE_STA,
 			NES_TEST_CPU_EXECUTE_STX,
@@ -134,7 +138,9 @@ namespace NES {
 			NES_CPU_HEADER "::BVC",
 			NES_CPU_HEADER "::BVS",
 			NES_CPU_HEADER "::CLC",
+#ifndef CPU_RP2A03
 			NES_CPU_HEADER "::CLD",
+#endif // CPU_RP2A03
 			NES_CPU_HEADER "::CLI",
 			NES_CPU_HEADER "::CLV",
 			NES_CPU_HEADER "::CMP",
@@ -165,7 +171,9 @@ namespace NES {
 			NES_CPU_HEADER "::RTS",
 			NES_CPU_HEADER "::SBC",
 			NES_CPU_HEADER "::SEC",
+#ifndef CPU_RP2A03
 			NES_CPU_HEADER "::SED",
+#endif // CPU_RP2A03
 			NES_CPU_HEADER "::SEI",
 			NES_CPU_HEADER "::STA",
 			NES_CPU_HEADER "::STX",
@@ -208,7 +216,9 @@ namespace NES {
 			nes_test_cpu::execute_bvc,
 			nes_test_cpu::execute_bvs,
 			nes_test_cpu::execute_clc,
+#ifndef CPU_RP2A03
 			nes_test_cpu::execute_cld,
+#endif // CPU_RP2A03
 			nes_test_cpu::execute_cli,
 			nes_test_cpu::execute_clv,
 			nes_test_cpu::execute_cmp,
@@ -239,7 +249,9 @@ namespace NES {
 			nes_test_cpu::execute_rts,
 			nes_test_cpu::execute_sbc,
 			nes_test_cpu::execute_sec,
+#ifndef CPU_RP2A03
 			nes_test_cpu::execute_sed,
+#endif // CPU_RPA203
 			nes_test_cpu::execute_sei,
 			nes_test_cpu::execute_sta,
 			nes_test_cpu::execute_stx,
@@ -3143,6 +3155,7 @@ exit:
 			return result;
 		}
 
+#ifndef CPU_RP2A03
 		nes_test_t 
 		_nes_test_cpu::execute_cld(
 			__in void *context
@@ -3225,6 +3238,7 @@ exit:
 exit:
 			return result;
 		}
+#endif // CPU_RP2A03
 
 		nes_test_t 
 		_nes_test_cpu::execute_cli(
@@ -8748,6 +8762,7 @@ exit:
 			return result;
 		}
 
+#ifndef CPU_RP2A03
 		nes_test_t 
 		_nes_test_cpu::execute_sed(
 			__in void *context
@@ -8830,6 +8845,7 @@ exit:
 exit:
 			return result;
 		}
+#endif // CPU_RP2A03
 
 		nes_test_t 
 		_nes_test_cpu::execute_sei(
@@ -10299,10 +10315,10 @@ exit:
 
 				CPU_FLAG_CLEAR(p, CPU_FLAG_INTERRUPT_DISABLED);
 
-				if((mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 1) != p)
-						|| (mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 2)
+				if((mem_inst->at(NES_MEM_MMU, inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 1) != p)
+						|| (mem_inst->at(NES_MEM_MMU, inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 2)
 							!= (pc & UINT8_MAX))
-						|| (mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 3) 
+						|| (mem_inst->at(NES_MEM_MMU, inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 3) 
 							!= ((pc >> BITS_PER_BYTE) & UINT8_MAX))) {
 					result = NES_TEST_FAILURE;
 					goto exit;
@@ -10478,10 +10494,10 @@ exit:
 
 				CPU_FLAG_CLEAR(p, CPU_FLAG_INTERRUPT_DISABLED);
 
-				if((mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 1) != p)
-						|| (mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 2)
+				if((mem_inst->at(NES_MEM_MMU, inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 1) != p)
+						|| (mem_inst->at(NES_MEM_MMU, inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 2)
 							!= (pc & UINT8_MAX))
-						|| (mem_inst->at(inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 3) 
+						|| (mem_inst->at(NES_MEM_MMU, inst->m_register_sp + CPU_REGISTER_SP_OFFSET + 3) 
 							!= ((pc >> BITS_PER_BYTE) & UINT8_MAX))) {
 					result = NES_TEST_FAILURE;
 					goto exit;

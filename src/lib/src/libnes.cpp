@@ -94,6 +94,36 @@ exit:
 }
 
 neserr_t 
+nes_run(
+	__inout nes_context *context,
+	__in const char *input,
+	__in int debug
+	)
+{
+	neserr_t result = NES_ERR_NONE;
+
+	if(!context || !input) {
+		result = NES_ERR_INVALID_ARGUMENT;
+		goto exit;
+	}
+
+	if(!context->session) {
+		result = NES_ERR_INVALID_STATE;
+		goto exit;
+	}
+
+	try {
+		((nes_ptr) context->session)->run(input, debug != NES_NO_DEBUG);
+	} catch(...) {
+		result = NES_ERR_FAILURE;
+		goto exit;
+	}
+
+exit:
+	return result;
+}
+
+neserr_t 
 nes_uninitialize(
 	__inout nes_context *context
 	)

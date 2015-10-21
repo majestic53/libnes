@@ -67,12 +67,31 @@ namespace NES {
 
 		std::string 
 		_nes_memory::address_as_string(
+			__in nes_memory_t type,
 			__in uint16_t address,
 			__in_opt bool verbose
 			)
 		{
+			nes_memory_block *blk = NULL;
+
 			ATOMIC_CALL_RECUR(m_lock);
-			return nes_memory::address_as_string(m_block, address, verbose);
+
+			switch(type) {
+				case NES_MEM_MMU:
+					blk = &m_mmu;
+					break;
+				case NES_MEM_PPU:
+					blk = &m_ppu;
+					break;
+				case NES_MEM_PPU_OAM:
+					blk = &m_ppu_oam;
+					break;
+				default:
+					THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_TYPE,
+						"type. %lu", type);
+			}
+
+			return nes_memory::address_as_string(*blk, address, verbose);
 		}
 
 		std::string 
@@ -110,21 +129,39 @@ namespace NES {
 
 		uint8_t &
 		_nes_memory::at(
+			__in nes_memory_t type,
 			__in uint16_t address
 			)
 		{
+			nes_memory_block *blk = NULL;
+
 			ATOMIC_CALL_RECUR(m_lock);
 
 			if(!m_initialized) {
 				THROW_NES_MEMORY_EXCEPTION(NES_MEMORY_EXCEPTION_UNINITIALIZED);
 			}
 
-			if(address >= m_block.size()) {
-				THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_ADDRESS,
-					"addr. 0x%x (max. 0x%x)", address, NES_MEMORY_MAX);
+			switch(type) {
+				case NES_MEM_MMU:
+					blk = &m_mmu;
+					break;
+				case NES_MEM_PPU:
+					blk = &m_ppu;
+					break;
+				case NES_MEM_PPU_OAM:
+					blk = &m_ppu_oam;
+					break;
+				default:
+					THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_TYPE,
+						"type. %lu", type);
 			}
 
-			return m_block.at(address);
+			if(address >= blk->size()) {
+				THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_ADDRESS,
+					"addr. 0x%x (max. 0x%x)", address, NES_MMU_MAX);
+			}
+
+			return blk->at(address);
 		}
 
 		std::string 
@@ -200,8 +237,12 @@ namespace NES {
 				THROW_NES_MEMORY_EXCEPTION(NES_MEMORY_EXCEPTION_UNINITIALIZED);
 			}
 
-			m_block.clear();
-			m_block.resize(NES_MEMORY_MAX + 1, 0);
+			m_mmu.clear();
+			m_mmu.resize(NES_MMU_MAX + 1, 0);
+			m_ppu.clear();
+			m_ppu.resize(NES_PPU_MAX + 1, 0);
+			m_ppu_oam.clear();
+			m_ppu_oam.resize(NES_PPU_OAM_MAX + 1, 0);
 		}
 
 		std::string 
@@ -231,32 +272,35 @@ namespace NES {
 
 		bool 
 		_nes_memory::flag_check(
+			__in nes_memory_t type,
 			__in uint16_t address,
 			__in uint8_t flag
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-			return (at(address) & flag);
+			return (at(type, address) & flag);
 		}
 
 		void 
 		_nes_memory::flag_clear(
+			__in nes_memory_t type,
 			__in uint16_t address,
 			__in uint8_t flag
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-			at(address) &= ~flag;
+			at(type, address) &= ~flag;
 		}
 
 		void 
 		_nes_memory::flag_set(
+			__in nes_memory_t type,
 			__in uint16_t address,
 			__in uint8_t flag
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-			at(address) |= flag;
+			at(type, address) |= flag;
 		}
 
 		void 
@@ -287,12 +331,14 @@ namespace NES {
 
 		uint16_t 
 		_nes_memory::read(
+			__in nes_memory_t type,
 			__in uint16_t address,
 			__in uint16_t offset,
 			__out nes_memory_block &block
 			)
 		{			
 			uint16_t result = offset;
+			nes_memory_block *blk = NULL;
 			nes_memory_block::iterator end;
 
 			ATOMIC_CALL_RECUR(m_lock);
@@ -301,33 +347,65 @@ namespace NES {
 				THROW_NES_MEMORY_EXCEPTION(NES_MEMORY_EXCEPTION_UNINITIALIZED);
 			}
 
-			if(address >= m_block.size()) {
+			switch(type) {
+				case NES_MEM_MMU:
+					blk = &m_mmu;
+					break;
+				case NES_MEM_PPU:
+					blk = &m_ppu;
+					break;
+				case NES_MEM_PPU_OAM:
+					blk = &m_ppu_oam;
+					break;
+				default:
+					THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_TYPE,
+						"type. %lu", type);
+			}
+
+			if(address >= blk->size()) {
 				THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_ADDRESS,
 					"addr. 0x%x", address);
 			}
 
-			if((address + offset) >= m_block.size()) {
-				result = (m_block.size() - address);
-				end = m_block.end();
+			if((address + offset) >= blk->size()) {
+				result = (blk->size() - address);
+				end = blk->end();
 			} else {
-				end = (m_block.begin() + (address + offset));
+				end = (blk->begin() + (address + offset));
 			}
 
-			block.insert(block.begin(), m_block.begin() + address, end);
+			block.insert(block.begin(), blk->begin() + address, end);
 
 			return result;
 		}
 
 		std::string 
 		_nes_memory::to_string(
+			__in nes_memory_t type,
 			__in uint16_t address,
 			__in uint16_t offset,
 			__in_opt bool verbose
 			)
 		{
 			std::stringstream result;
+			nes_memory_block *blk = NULL;
 
 			ATOMIC_CALL_RECUR(m_lock);
+
+			switch(type) {
+				case NES_MEM_MMU:
+					blk = &m_mmu;
+					break;
+				case NES_MEM_PPU:
+					blk = &m_ppu;
+					break;
+				case NES_MEM_PPU_OAM:
+					blk = &m_ppu_oam;
+					break;
+				default:
+					THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_TYPE,
+						"type. %lu", type);
+			}
 
 			result << "<" << NES_MEMORY_HEADER << "> (" 
 				<< (m_initialized ? INITIALIZED : UNINITIALIZED); 
@@ -340,7 +418,7 @@ namespace NES {
 
 			if(m_initialized) {
 				result << std::endl 
-					<< nes_memory::block_as_string(m_block, address, offset, 
+					<< nes_memory::block_as_string(*blk, address, offset, 
 						verbose);
 			}
 
@@ -356,16 +434,20 @@ namespace NES {
 				THROW_NES_MEMORY_EXCEPTION(NES_MEMORY_EXCEPTION_UNINITIALIZED);
 			}
 
-			m_block.clear();
+			m_mmu.clear();
+			m_ppu.clear();
+			m_ppu_oam.clear();
 			m_initialized = false;
 		}
 
 		uint16_t 
 		_nes_memory::write(
+			__in nes_memory_t type,
 			__in uint16_t address,
 			__in const nes_memory_block &block
 			)
 		{
+			nes_memory_block *blk = NULL;
 			uint16_t iter = 0, result = block.size();
 
 			ATOMIC_CALL_RECUR(m_lock);
@@ -374,17 +456,32 @@ namespace NES {
 				THROW_NES_MEMORY_EXCEPTION(NES_MEMORY_EXCEPTION_UNINITIALIZED);
 			}
 
-			if(address >= m_block.size()) {
+			switch(type) {
+				case NES_MEM_MMU:
+					blk = &m_mmu;
+					break;
+				case NES_MEM_PPU:
+					blk = &m_ppu;
+					break;
+				case NES_MEM_PPU_OAM:
+					blk = &m_ppu_oam;
+					break;
+				default:
+					THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_TYPE,
+						"type. %lu", type);
+			}
+
+			if(address >= blk->size()) {
 				THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_ADDRESS,
 					"addr. 0x%x", address);
 			}
 
-			if((address + block.size()) >= m_block.size()) {
-				result = (m_block.size() - address);
+			if((address + block.size()) >= blk->size()) {
+				result = (blk->size() - address);
 			}
 
 			for(; iter < result; ++iter) {
-				m_block.at(address + iter) = block.at(iter);
+				blk->at(address + iter) = block.at(iter);
 			}
 
 			return result;

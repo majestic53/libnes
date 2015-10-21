@@ -26,8 +26,12 @@ namespace NES {
 
 	namespace TEST {
 
-		#define TEST_MEM_ADDRESS 0x100
-		#define TEST_MEM_ADDRESS_HIGH 0xfffe
+		#define TEST_MEM_MMU_ADDRESS 0x100
+		#define TEST_MEM_MMU_ADDRESS_HIGH (UINT16_MAX - 1)
+		#define TEST_MEM_PPU_ADDRESS 0x100
+		#define TEST_MEM_PPU_ADDRESS_HIGH 0x3ffe
+		#define TEST_MEM_PPU_OAM_ADDRESS 0x10
+		#define TEST_MEM_PPU_OAM_ADDRESS_HIGH (UINT8_MAX - 1)
 		#define TEST_MEM_OFFSET 0x4
 		#define TEST_MEM_OFFSET_HIGH 0x2
 		#define TEST_MEM_VALUE 0x40
@@ -143,7 +147,7 @@ exit:
 					inst->uninitialize();
 
 					try {
-						inst->at(TEST_MEM_ADDRESS);
+						inst->at(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS);
 						result = NES_TEST_FAILURE;
 						goto exit;
 					} catch(...) { }
@@ -151,13 +155,38 @@ exit:
 					inst->initialize();
 				}
 
-				if(inst->at(TEST_MEM_ADDRESS) != 0) {
+				// NES_MEM_MMU
+				if(inst->at(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS) != 0) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
 
-				inst->at(TEST_MEM_ADDRESS) = TEST_MEM_VALUE;
-				if(inst->at(TEST_MEM_ADDRESS) != TEST_MEM_VALUE) {
+				inst->at(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS) = TEST_MEM_VALUE;
+				if(inst->at(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS) != TEST_MEM_VALUE) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				// NES_MEM_PPU
+				if(inst->at(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS) != 0) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->at(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS) = TEST_MEM_VALUE;
+				if(inst->at(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS) != TEST_MEM_VALUE) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				// NES_MEM_PPU_OAM
+				if(inst->at(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS) != 0) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->at(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS) = TEST_MEM_VALUE;
+				if(inst->at(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS) != TEST_MEM_VALUE) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
@@ -203,10 +232,29 @@ exit:
 					inst->initialize();
 				}
 
-				inst->at(TEST_MEM_ADDRESS) = TEST_MEM_VALUE;
+				// NES_MEM_MMU
+				inst->at(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS) = TEST_MEM_VALUE;
 				inst->clear();
 
-				if(inst->at(TEST_MEM_ADDRESS) != 0) {
+				if(inst->at(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS) != 0) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				// NES_MEM_PPU
+				inst->at(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS) = TEST_MEM_VALUE;
+				inst->clear();
+
+				if(inst->at(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS) != 0) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				// NES_MEM_PPU_OAM
+				inst->at(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS) = TEST_MEM_VALUE;
+				inst->clear();
+
+				if(inst->at(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS) != 0) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
@@ -244,7 +292,8 @@ exit:
 					inst->uninitialize();
 
 					try {
-						inst->flag_check(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
+						inst->flag_check(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, 
+							TEST_MEM_VALUE);
 						result = NES_TEST_FAILURE;
 						goto exit;
 					} catch(...) { }
@@ -252,14 +301,44 @@ exit:
 					inst->initialize();
 				}
 
-				inst->at(TEST_MEM_ADDRESS) = TEST_MEM_VALUE;
+				// NES_MEM_MMU
+				inst->at(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS) = TEST_MEM_VALUE;
 
-				if(!inst->flag_check(TEST_MEM_ADDRESS, TEST_MEM_VALUE)) {
+				if(!inst->flag_check(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, 
+						TEST_MEM_VALUE)) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
 
-				if(inst->flag_check(TEST_MEM_ADDRESS, 0x1)) {
+				if(inst->flag_check(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, 0x1)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				// NES_MEM_PPU
+				inst->at(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS) = TEST_MEM_VALUE;
+
+				if(!inst->flag_check(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS, 
+						TEST_MEM_VALUE)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				if(inst->flag_check(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS, 0x1)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				// NES_MEM_PPU_OAM
+				inst->at(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS) = TEST_MEM_VALUE;
+
+				if(!inst->flag_check(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS, 
+						TEST_MEM_VALUE)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				if(inst->flag_check(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS, 0x1)) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
@@ -297,7 +376,8 @@ exit:
 					inst->uninitialize();
 
 					try {
-						inst->flag_clear(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
+						inst->flag_clear(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, 
+							TEST_MEM_VALUE);
 						result = NES_TEST_FAILURE;
 						goto exit;
 					} catch(...) { }
@@ -305,10 +385,29 @@ exit:
 					inst->initialize();
 				}
 
-				inst->at(TEST_MEM_ADDRESS) = TEST_MEM_VALUE;
-				inst->flag_clear(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
+				// NES_MEM_MMU
+				inst->at(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS) = TEST_MEM_VALUE;
+				inst->flag_clear(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, TEST_MEM_VALUE);
 
-				if(inst->flag_check(TEST_MEM_ADDRESS, TEST_MEM_VALUE)) {
+				if(inst->flag_check(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, TEST_MEM_VALUE)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				// NES_MEM_PPU
+				inst->at(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS) = TEST_MEM_VALUE;
+				inst->flag_clear(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS, TEST_MEM_VALUE);
+
+				if(inst->flag_check(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS, TEST_MEM_VALUE)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				// NES_MEM_PPU_OAM
+				inst->at(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS) = TEST_MEM_VALUE;
+				inst->flag_clear(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS, TEST_MEM_VALUE);
+
+				if(inst->flag_check(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS, TEST_MEM_VALUE)) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
@@ -346,7 +445,8 @@ exit:
 					inst->uninitialize();
 
 					try {
-						inst->flag_set(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
+						inst->flag_set(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, 
+							TEST_MEM_VALUE);
 						result = NES_TEST_FAILURE;
 						goto exit;
 					} catch(...) { }
@@ -354,9 +454,26 @@ exit:
 					inst->initialize();
 				}
 
-				inst->flag_set(TEST_MEM_ADDRESS, TEST_MEM_VALUE);
+				// NES_MEM_MMU
+				inst->flag_set(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, TEST_MEM_VALUE);
 
-				if(!inst->flag_check(TEST_MEM_ADDRESS, TEST_MEM_VALUE)) {
+				if(!inst->flag_check(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, TEST_MEM_VALUE)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				// NES_MEM_PPU
+				inst->flag_set(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS, TEST_MEM_VALUE);
+
+				if(!inst->flag_check(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS, TEST_MEM_VALUE)) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				// NES_MEM_PPU_OAM
+				inst->flag_set(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS, TEST_MEM_VALUE);
+
+				if(!inst->flag_check(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS, TEST_MEM_VALUE)) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
@@ -516,7 +633,8 @@ exit:
 					inst->uninitialize();
 
 					try {
-						inst->read(TEST_MEM_ADDRESS, TEST_MEM_OFFSET, blk);
+						inst->read(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, TEST_MEM_OFFSET, 
+							blk);
 						result = NES_TEST_FAILURE;
 						goto exit;
 					} catch(...) { }
@@ -524,7 +642,9 @@ exit:
 					inst->initialize();
 				}
 
-				if(inst->read(TEST_MEM_ADDRESS, TEST_MEM_OFFSET, blk) != TEST_MEM_OFFSET) {
+				// NES_MEM_MMU
+				if(inst->read(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, TEST_MEM_OFFSET, blk) 
+						!= TEST_MEM_OFFSET) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
@@ -537,9 +657,10 @@ exit:
 					}
 				}
 
-				inst->write(TEST_MEM_ADDRESS, TEST_BLK);
+				inst->write(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, TEST_BLK);
 
-				if(inst->read(TEST_MEM_ADDRESS, TEST_MEM_OFFSET, blk) != TEST_BLK.size()) {
+				if(inst->read(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, TEST_MEM_OFFSET, blk) 
+						!= TEST_BLK.size()) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
@@ -552,9 +673,108 @@ exit:
 					}
 				}
 
-				inst->write(TEST_MEM_ADDRESS_HIGH, TEST_BLK);
+				inst->write(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS_HIGH, TEST_BLK);
 
-				if(inst->read(TEST_MEM_ADDRESS_HIGH, TEST_MEM_OFFSET, blk) != TEST_MEM_OFFSET_HIGH) {
+				if(inst->read(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS_HIGH, TEST_MEM_OFFSET, blk) 
+						!= TEST_MEM_OFFSET_HIGH) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				for(iter = 0; iter < TEST_MEM_OFFSET_HIGH; ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				blk.clear();
+
+				// NES_MEM_PPU
+				if(inst->read(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS, TEST_MEM_OFFSET, blk) 
+						!= TEST_MEM_OFFSET) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				for(blk_iter = blk.begin(); blk_iter != blk.end(); ++blk_iter) {
+
+					if(*blk_iter != 0) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				inst->write(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS, TEST_BLK);
+
+				if(inst->read(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS, TEST_MEM_OFFSET, blk) 
+						!= TEST_BLK.size()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				for(iter = 0; iter < TEST_BLK.size(); ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				inst->write(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS_HIGH, TEST_BLK);
+
+				if(inst->read(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS_HIGH, TEST_MEM_OFFSET, blk) 
+						!= TEST_MEM_OFFSET_HIGH) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				for(iter = 0; iter < TEST_MEM_OFFSET_HIGH; ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				blk.clear();
+
+				// NES_MEM_PPU_OAM
+				if(inst->read(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS, TEST_MEM_OFFSET, blk) 
+						!= TEST_MEM_OFFSET) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				for(blk_iter = blk.begin(); blk_iter != blk.end(); ++blk_iter) {
+
+					if(*blk_iter != 0) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				inst->write(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS, TEST_BLK);
+
+				if(inst->read(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS, TEST_MEM_OFFSET, blk) 
+						!= TEST_BLK.size()) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				for(iter = 0; iter < TEST_BLK.size(); ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				inst->write(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS_HIGH, TEST_BLK);
+
+				if(inst->read(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS_HIGH, TEST_MEM_OFFSET, blk) 
+						!= TEST_MEM_OFFSET_HIGH) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
@@ -584,7 +804,8 @@ exit:
 			nes_test_set result(NES_MEMORY_HEADER);
 
 			for(; iter <= NES_TEST_MEMORY_MAX; ++iter) {
-				result.insert(nes_test(NES_TEST_MEMORY_STRING(iter), NES_TEST_MEMORY_CALLBACK(iter), 
+				result.insert(nes_test(NES_TEST_MEMORY_STRING(iter), 
+					NES_TEST_MEMORY_CALLBACK(iter), 
 					nes_memory::acquire(), nes_test_memory::test_initialize, 
 					nes_test_memory::test_uninitialize));
 			}
@@ -728,7 +949,7 @@ exit:
 					inst->uninitialize();
 
 					try {
-						inst->write(TEST_MEM_ADDRESS, TEST_BLK);
+						inst->write(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, TEST_BLK);
 						result = NES_TEST_FAILURE;
 						goto exit;
 					} catch(...) { }
@@ -736,12 +957,14 @@ exit:
 					inst->initialize();
 				}
 
-				if(inst->write(TEST_MEM_ADDRESS, TEST_BLK) != TEST_MEM_OFFSET) {
+				// NES_MEM_MMU
+				if(inst->write(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, TEST_BLK) 
+						!= TEST_MEM_OFFSET) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
 
-				inst->read(TEST_MEM_ADDRESS, TEST_MEM_OFFSET, blk);
+				inst->read(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS, TEST_MEM_OFFSET, blk);
 
 				for(iter = 0; iter < TEST_BLK.size(); ++iter) {
 
@@ -751,12 +974,83 @@ exit:
 					}
 				}
 
-				if(inst->write(TEST_MEM_ADDRESS_HIGH, TEST_BLK) != TEST_MEM_OFFSET_HIGH) {
+				if(inst->write(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS_HIGH, TEST_BLK) 
+						!= TEST_MEM_OFFSET_HIGH) {
 					result = NES_TEST_FAILURE;
 					goto exit;
 				}
 
-				inst->read(TEST_MEM_ADDRESS_HIGH, TEST_MEM_OFFSET, blk);
+				inst->read(NES_MEM_MMU, TEST_MEM_MMU_ADDRESS_HIGH, TEST_MEM_OFFSET, blk);
+
+				for(iter = 0; iter < TEST_MEM_OFFSET_HIGH; ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				blk.clear();
+
+				// NES_MEM_PPU
+				if(inst->write(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS, TEST_BLK) 
+						!= TEST_MEM_OFFSET) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->read(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS, TEST_MEM_OFFSET, blk);
+
+				for(iter = 0; iter < TEST_BLK.size(); ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				if(inst->write(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS_HIGH, TEST_BLK) 
+						!= TEST_MEM_OFFSET_HIGH) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->read(NES_MEM_PPU, TEST_MEM_PPU_ADDRESS_HIGH, TEST_MEM_OFFSET, blk);
+
+				for(iter = 0; iter < TEST_MEM_OFFSET_HIGH; ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				blk.clear();
+
+				// NES_MEM_PPU_OAM
+				if(inst->write(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS, TEST_BLK) 
+						!= TEST_MEM_OFFSET) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->read(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS, TEST_MEM_OFFSET, blk);
+
+				for(iter = 0; iter < TEST_BLK.size(); ++iter) {
+
+					if(blk.at(iter) != TEST_BLK.at(iter)) {
+						result = NES_TEST_FAILURE;
+						goto exit;
+					}
+				}
+
+				if(inst->write(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS_HIGH, TEST_BLK) 
+						!= TEST_MEM_OFFSET_HIGH) {
+					result = NES_TEST_FAILURE;
+					goto exit;
+				}
+
+				inst->read(NES_MEM_PPU_OAM, TEST_MEM_PPU_OAM_ADDRESS_HIGH, TEST_MEM_OFFSET, blk);
 
 				for(iter = 0; iter < TEST_MEM_OFFSET_HIGH; ++iter) {
 

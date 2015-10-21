@@ -17,52 +17,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBNES_H_
-#define LIBNES_H_
+#ifndef NDEBUG
+#ifndef NES_TEST_PPU_H_
+#define NES_TEST_PPU_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
+namespace NES {
 
-#define NES_NO_DEBUG 0
+	namespace TEST {
 
-typedef enum {
-	NES_ERR_NONE = 0,
-	NES_ERR_FAILURE = 0x8000000UL,
-	NES_ERR_INVALID_ARGUMENT,
-	NES_ERR_INVALID_STATE,
-} neserr_t;
+		typedef class _nes_test_ppu {
 
-#define NES_SUCCESS(_ERR_) (((signed) _ERR_) >= NES_ERR_NONE)
+			public:
 
-typedef struct {
-	int major;
-	int minor;
-	void *session;
-} nes_context;
+				static nes_test_t acquire(
+					__in void *context
+					);
 
-neserr_t nes_initialize(
-	nes_context *context
-	);
+				// TODO
 
-int nes_is_valid(
-	nes_context *context
-	);
+				static nes_test_set set_generate(void);
 
-neserr_t nes_run(
-	nes_context *context,
-	const char *input,
-	int debug
-	);
+				static nes_test_t test_initialize(
+					__in void *context
+					);
 
-neserr_t nes_uninitialize(
-	nes_context *context
-	);
+				static nes_test_t test_uninitialize(
+					__in void *context
+					);
 
-const char *nes_version(void);
-
-#ifdef __cplusplus
+		} nes_test_ppu, *nes_test_ppu_ptr;
+	}
 }
-#endif // __cplusplus
 
-#endif // LIBNES_H_
+#endif // NES_TEST_PPU_H_
+#endif // NDEBUG
