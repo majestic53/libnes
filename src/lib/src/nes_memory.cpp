@@ -237,12 +237,39 @@ namespace NES {
 				THROW_NES_MEMORY_EXCEPTION(NES_MEMORY_EXCEPTION_UNINITIALIZED);
 			}
 
-			m_mmu.clear();
-			m_mmu.resize(NES_MMU_MAX + 1, 0);
-			m_ppu.clear();
-			m_ppu.resize(NES_PPU_MAX + 1, 0);
-			m_ppu_oam.clear();
-			m_ppu_oam.resize(NES_PPU_OAM_MAX + 1, 0);
+			clear(NES_MEM_MMU);
+			clear(NES_MEM_PPU);
+			clear(NES_MEM_PPU_OAM);
+		}
+
+		void 
+		_nes_memory::clear(
+			__in nes_memory_t type
+			)
+		{
+			ATOMIC_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_NES_MEMORY_EXCEPTION(NES_MEMORY_EXCEPTION_UNINITIALIZED);
+			}
+
+			switch(type) {
+				case NES_MEM_MMU:
+					m_mmu.clear();
+					m_mmu.resize(NES_MMU_MAX + 1, 0);
+					break;
+				case NES_MEM_PPU:
+					m_ppu.clear();
+					m_ppu.resize(NES_PPU_MAX + 1, 0);
+					break;
+				case NES_MEM_PPU_OAM:
+					m_ppu_oam.clear();
+					m_ppu_oam.resize(NES_PPU_OAM_MAX + 1, 0);
+					break;
+				default:
+					THROW_NES_MEMORY_EXCEPTION_MESSAGE(NES_MEMORY_EXCEPTION_INVALID_TYPE,
+						"type. %lu", type);
+			}
 		}
 
 		std::string 

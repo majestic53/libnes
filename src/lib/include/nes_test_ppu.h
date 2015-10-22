@@ -33,15 +33,53 @@ namespace NES {
 					__in void *context
 					);
 
-				// TODO
+				static nes_test_t clear(
+					__in void *context
+					);
+
+				static nes_test_t cycles(
+					__in void *context
+					);
+
+				static nes_test_t initialize(
+					__in void *context
+					);
+
+				static nes_test_t is_allocated(
+					__in void *context
+					);
+
+				static nes_test_t is_initialized(
+					__in void *context
+					);
+
+				static nes_test_t reset(
+					__in void *context
+					);
 
 				static nes_test_set set_generate(void);
+
+				static nes_test_t start(
+					__in void *context
+					);
+
+				static nes_test_t step(
+					__in void *context
+					);
+
+				static nes_test_t stop(
+					__in void *context
+					);
 
 				static nes_test_t test_initialize(
 					__in void *context
 					);
 
 				static nes_test_t test_uninitialize(
+					__in void *context
+					);
+
+				static nes_test_t uninitialize(
 					__in void *context
 					);
 

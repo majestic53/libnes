@@ -30,6 +30,7 @@ namespace NES {
 	#define ROM_MAGIC_LEN 4
 	#define ROM_CHARACTER_LEN 0x2000
 	#define ROM_PROGRAM_LEN 0x4000
+	#define ROM_SIZE_MAX 0x1e84800 // 32MB
 	#define ROM_TRAINER_LEN 0x200
 
 	enum {

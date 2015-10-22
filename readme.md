@@ -13,6 +13,11 @@ Changelog
 =========
 
 ##Version 0.1.1543
+*Updated:10/21/2015*
+
+* Added ppu class tests (partial)
+* Minor bug fixes
+
 *Updated:10/20/2015*
 
 * Added ppu class (partial)

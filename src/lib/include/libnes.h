@@ -28,12 +28,12 @@ extern "C" {
 
 typedef enum {
 	NES_ERR_NONE = 0,
-	NES_ERR_FAILURE = 0x8000000UL,
+	NES_ERR_FAILURE,
 	NES_ERR_INVALID_ARGUMENT,
 	NES_ERR_INVALID_STATE,
 } neserr_t;
 
-#define NES_SUCCESS(_ERR_) (((signed) _ERR_) >= NES_ERR_NONE)
+#define NES_SUCCESS(_ERR_) ((_ERR_) == NES_ERR_NONE)
 
 typedef struct {
 	int major;

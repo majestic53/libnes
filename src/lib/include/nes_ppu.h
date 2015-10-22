@@ -34,6 +34,10 @@ namespace NES {
 
 				void clear(void);
 
+				void clear(
+					__in nes_memory_t type
+					);
+
 				uint32_t cycles(void);
 
 				void initialize(void);
@@ -42,9 +46,15 @@ namespace NES {
 
 				bool is_initialized(void);
 
+				bool is_started(void);
+
 				void reset(void);
 
+				void start(void);
+
 				void step(void);
+
+				void stop(void);
 
 				std::string to_string(
 					__in_opt bool verbose = false
@@ -99,6 +109,8 @@ namespace NES {
 				static _nes_ppu *m_instance;
 
 				nes_memory_ptr m_memory;
+
+				bool m_started;
 
 			private:
 

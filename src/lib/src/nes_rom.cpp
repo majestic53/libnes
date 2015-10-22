@@ -408,7 +408,13 @@ namespace NES {
 			}
 
 			file.seekg(0, std::ios::end);
+
 			len = file.tellg();
+			if((len < sizeof(nes_rom_header)) || (len > ROM_SIZE_MAX)) {
+				THROW_NES_ROM_EXCEPTION_MESSAGE(NES_ROM_EXCEPTION_MALFORMED,
+					"%s", CHECK_STR(input));
+			}
+
 			block.resize(len);
 			file.seekg(0, std::ios::beg);
 			file.read((char *) &block[0], len);

@@ -37,6 +37,9 @@ namespace NES {
 		enum {
 			NES_PPU_EXCEPTION_ALLOCATED = 0,
 			NES_PPU_EXCEPTION_INITIALIZED,
+			NES_PPU_EXCEPTION_INVALID_TYPE,
+			NES_PUU_EXCEPTION_STARTED,
+			NES_PUU_EXCEPTION_STOPPED,
 			NES_PPU_EXCEPTION_UNINITIALIZED,
 		};
 
@@ -45,6 +48,9 @@ namespace NES {
 		static const std::string NES_PPU_EXCEPTION_STR[] = {
 			"Failed to allocate ppu component",
 			"Ppu component is initialized",
+			"Invalid memory type",
+			"Ppu component is started",
+			"Ppu component is stopped",
 			"Ppu component is uninitialized",
 			};
 

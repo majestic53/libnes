@@ -54,7 +54,12 @@ nes_initialize(
 		if(!inst->is_initialized()) {
 			inst->initialize();
 		}
-	} catch(...) {
+	} catch(nes_exception &exc) {
+		std::cerr << exc.to_string(true) << std::endl;
+		result = NES_ERR_FAILURE;
+		goto exit;
+	} catch(std::exception &exc) {
+		std::cerr << exc.what() << std::endl;
 		result = NES_ERR_FAILURE;
 		goto exit;
 	}
@@ -62,7 +67,7 @@ nes_initialize(
 	context->major = VERSION_MAJ;
 	context->minor = VERSION_MIN;
 	context->session = inst;
-	
+
 exit:
 	return result;
 }
@@ -114,7 +119,12 @@ nes_run(
 
 	try {
 		((nes_ptr) context->session)->run(input, debug != NES_NO_DEBUG);
-	} catch(...) {
+	} catch(nes_exception &exc) {
+		std::cerr << exc.to_string(true) << std::endl;
+		result = NES_ERR_FAILURE;
+		goto exit;
+	} catch(std::exception &exc) {
+		std::cerr << exc.what() << std::endl;
 		result = NES_ERR_FAILURE;
 		goto exit;
 	}
@@ -152,7 +162,12 @@ nes_uninitialize(
 		if(inst->is_initialized()) {
 			inst->uninitialize();
 		}
-	} catch(...) {
+	} catch(nes_exception &exc) {
+		std::cerr << exc.to_string(true) << std::endl;
+		result = NES_ERR_FAILURE;
+		goto exit;
+	} catch(std::exception &exc) {
+		std::cerr << exc.what() << std::endl;
 		result = NES_ERR_FAILURE;
 		goto exit;
 	}

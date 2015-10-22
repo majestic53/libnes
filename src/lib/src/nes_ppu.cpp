@@ -29,7 +29,8 @@ namespace NES {
 		_nes_ppu::_nes_ppu(void) :
 			m_cycles(0),
 			m_initialized(false),
-			m_memory(nes_memory::acquire())
+			m_memory(nes_memory::acquire()),
+			m_started(false)
 		{
 			std::atexit(nes_ppu::_delete);
 		}
@@ -76,9 +77,32 @@ namespace NES {
 				THROW_NES_PPU_EXCEPTION(NES_PPU_EXCEPTION_UNINITIALIZED);
 			}
 
+			clear(NES_MEM_PPU);
+			clear(NES_MEM_PPU_OAM);
+		}
+
+		void 
+		_nes_ppu::clear(
+			__in nes_memory_t type
+			)
+		{
+			ATOMIC_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_NES_PPU_EXCEPTION(NES_PPU_EXCEPTION_UNINITIALIZED);
+			}
+
 			reset();
 
-			// TODO
+			switch(type) {
+				case NES_MEM_PPU:
+				case NES_MEM_PPU_OAM:
+					m_memory->clear(type);
+					break;
+				default:
+					THROW_NES_PPU_EXCEPTION_MESSAGE(NES_PPU_EXCEPTION_INVALID_TYPE,
+						"type. %lu", type);
+			}
 		}
 
 		uint32_t 
@@ -105,7 +129,9 @@ namespace NES {
 			m_initialized = true;
 			m_cycles = 0;
 
-			// TODO
+			if(m_started) {
+				stop();
+			}
 		}
 
 		bool 
@@ -121,6 +147,13 @@ namespace NES {
 			return m_initialized;
 		}
 
+		bool 
+		_nes_ppu::is_started(void)
+		{
+			ATOMIC_CALL_RECUR(m_lock);
+			return (m_initialized && m_started);
+		}
+
 		uint8_t 
 		_nes_ppu::load(
 			__in nes_memory_t type,
@@ -128,10 +161,7 @@ namespace NES {
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-
-			// TODO
-			return 0;
-			// ---
+			return m_memory->at(type, address);
 		}
 
 		uint16_t 
@@ -141,10 +171,7 @@ namespace NES {
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-
-			// TODO
-			return 0;
-			// ---
+			return (load(type, address) | (load(type, address + 1) << BITS_PER_BYTE));
 		}
 
 		void 
@@ -157,8 +184,22 @@ namespace NES {
 			}
 
 			m_cycles = 0;
+		}
 
-			// TODO
+		void 
+		_nes_ppu::start(void)
+		{
+			ATOMIC_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_NES_PPU_EXCEPTION(NES_PPU_EXCEPTION_UNINITIALIZED);
+			}
+
+			if(m_started) {
+				THROW_NES_PPU_EXCEPTION(NES_PUU_EXCEPTION_STARTED);
+			}
+
+			m_started = true;
 		}
 
 		void 
@@ -170,9 +211,29 @@ namespace NES {
 				THROW_NES_PPU_EXCEPTION(NES_PPU_EXCEPTION_UNINITIALIZED);
 			}
 
+			if(!m_started) {
+				THROW_NES_PPU_EXCEPTION(NES_PUU_EXCEPTION_STOPPED);
+			}
+
 			// TODO
 
 			++m_cycles;
+		}
+
+		void 
+		_nes_ppu::stop(void)
+		{
+			ATOMIC_CALL_RECUR(m_lock);
+
+			if(!m_initialized) {
+				THROW_NES_PPU_EXCEPTION(NES_PPU_EXCEPTION_UNINITIALIZED);
+			}
+
+			if(!m_started) {
+				THROW_NES_PPU_EXCEPTION(NES_PUU_EXCEPTION_STOPPED);
+			}
+
+			m_started = false;
 		}
 
 		void 
@@ -183,8 +244,7 @@ namespace NES {
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-
-			// TODO
+			m_memory->at(type, address) = value;
 		}
 
 		void 
@@ -195,8 +255,8 @@ namespace NES {
 			)
 		{
 			ATOMIC_CALL_RECUR(m_lock);
-
-			// TODO
+			store(type, address, value & UINT8_MAX);
+			store(type, address + 1, (value >> BITS_PER_BYTE) & UINT8_MAX);
 		}
 
 		std::string 
@@ -233,7 +293,9 @@ namespace NES {
 				THROW_NES_PPU_EXCEPTION(NES_PPU_EXCEPTION_UNINITIALIZED);
 			}
 
-			// TODO
+			if(m_started) {
+				stop();
+			}
 
 			m_cycles = 0;
 			m_initialized = false;

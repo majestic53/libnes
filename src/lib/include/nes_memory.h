@@ -30,6 +30,8 @@ namespace NES {
 			NES_MEM_PPU_OAM,
 		} nes_memory_t;
 
+		#define NES_MEMORY_TYPE_MAX NES_MEM_PPU_OAM
+
 		typedef std::vector<uint8_t> nes_memory_block;
 
 		typedef class _nes_memory {
@@ -65,6 +67,10 @@ namespace NES {
 					);
 
 				void clear(void);
+
+				void clear(
+					__in nes_memory_t type
+					);
 
 				static std::string flag_as_string(
 					__in uint8_t flag,

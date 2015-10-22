@@ -28,12 +28,32 @@ namespace NES {
 
 		enum {
 			NES_TEST_PPU_ACQUIRE = 0,
+			NES_TEST_PPU_CLEAR,
+			NES_TEST_PPU_CYCLES,
+			NES_TEST_PPU_INITIALIZE,
+			NES_TEST_PPU_IS_ALLOCATED,
+			NES_TEST_PPU_IS_INITIALIZED,
+			NES_TEST_PPU_RESET,
+			NES_TEST_PPU_START,
+			NES_TEST_PPU_STEP,
+			NES_TEST_PPU_STOP,
+			NES_TEST_PPU_UNINITIALIZE,
 		};
 
-		#define NES_TEST_PPU_MAX NES_TEST_PPU_ACQUIRE
+		#define NES_TEST_PPU_MAX NES_TEST_PPU_UNINITIALIZE
 
 		static const std::string NES_TEST_PPU_STR[] = {
 			NES_PPU_HEADER "::ACQUIRE",
+			NES_PPU_HEADER "::CLEAR",
+			NES_PPU_HEADER "::CYCLES",
+			NES_PPU_HEADER "::INITIALIZE",
+			NES_PPU_HEADER "::IS_ALLOCATED",
+			NES_PPU_HEADER "::IS_INITIALIZED",
+			NES_PPU_HEADER "::RESET",
+			NES_PPU_HEADER "::START",
+			NES_PPU_HEADER "::STEP",
+			NES_PPU_HEADER "::STOP",
+			NES_PPU_HEADER "::UNINITIALIZE",
 			};
 
 		#define NES_TEST_PPU_STRING(_TYPE_) \
@@ -42,6 +62,16 @@ namespace NES {
 
 		static nes_test_cb NES_TEST_PPU_CB[] = {
 			nes_test_ppu::acquire,
+			nes_test_ppu::clear,
+			nes_test_ppu::cycles,
+			nes_test_ppu::initialize,
+			nes_test_ppu::is_allocated,
+			nes_test_ppu::is_initialized,
+			nes_test_ppu::reset,
+			nes_test_ppu::start,
+			nes_test_ppu::step,
+			nes_test_ppu::stop,
+			nes_test_ppu::uninitialize,
 			};
 
 		#define NES_TEST_PPU_CALLBACK(_TYPE_) \
@@ -70,7 +100,221 @@ exit:
 			return result;
 		}
 
-		// TODO
+		nes_test_t 
+		_nes_test_ppu::clear(
+			__in void *context
+			)
+		{
+			nes_ppu_ptr inst = NULL;
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			inst = (nes_ppu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
+
+				try {
+					inst->clear();
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
+
+				if(!inst->is_initialized()) {
+					inst->initialize();
+				}
+
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_ppu::cycles(
+			__in void *context
+			)
+		{
+			nes_ppu_ptr inst = NULL;
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			inst = (nes_ppu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
+
+				try {
+					inst->cycles();
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
+
+				if(!inst->is_initialized()) {
+					inst->initialize();
+				}
+
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_ppu::initialize(
+			__in void *context
+			)
+		{
+			nes_ppu_ptr inst = NULL;
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			inst = (nes_ppu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				try {
+					inst->initialize();
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
+
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_ppu::is_allocated(
+			__in void *context
+			)
+		{
+			nes_ppu_ptr inst = NULL;
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			inst = (nes_ppu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_ppu::is_initialized(
+			__in void *context
+			)
+		{
+			nes_ppu_ptr inst = NULL;
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			inst = (nes_ppu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_ppu::reset(
+			__in void *context
+			)
+		{
+			nes_ppu_ptr inst = NULL;
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			inst = (nes_ppu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
+
+				try {
+					inst->reset();
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
+
+				if(!inst->is_initialized()) {
+					inst->initialize();
+				}
+
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
 
 		nes_test_set 
 		_nes_test_ppu::set_generate(void)
@@ -85,6 +329,132 @@ exit:
 					nes_test_ppu::test_uninitialize));
 			}
 
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_ppu::start(
+			__in void *context
+			)
+		{
+			nes_ppu_ptr inst = NULL;
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			inst = (nes_ppu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
+
+				try {
+					inst->start();
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
+
+				if(!inst->is_initialized()) {
+					inst->initialize();
+				}
+
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_ppu::step(
+			__in void *context
+			)
+		{
+			nes_ppu_ptr inst = NULL;
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			inst = (nes_ppu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
+
+				try {
+					inst->step();
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
+
+				if(!inst->is_initialized()) {
+					inst->initialize();
+				}
+
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_ppu::stop(
+			__in void *context
+			)
+		{
+			nes_ppu_ptr inst = NULL;
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			inst = (nes_ppu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
+
+				try {
+					inst->stop();
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
+
+				if(!inst->is_initialized()) {
+					inst->initialize();
+				}
+
+				// TODO
+
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
 			return result;
 		}
 
@@ -137,6 +507,48 @@ exit:
 				if(inst->is_initialized()) {
 					inst->uninitialize();
 				}
+			} catch(...) {
+				result = NES_TEST_FAILURE;
+				goto exit;
+			}
+
+			result = NES_TEST_SUCCESS;
+
+exit:
+			return result;
+		}
+
+		nes_test_t 
+		_nes_test_ppu::uninitialize(
+			__in void *context
+			)
+		{
+			nes_ppu_ptr inst = NULL;
+			nes_test_t result = NES_TEST_INCONCLUSIVE;
+
+			inst = (nes_ppu_ptr) context;
+			if(!inst) {
+				goto exit;
+			}
+
+			try {
+
+				if(inst->is_initialized()) {
+					inst->uninitialize();
+				}
+
+				try {
+					inst->uninitialize();
+					result = NES_TEST_FAILURE;
+					goto exit;
+				} catch(...) { }
+
+				if(!inst->is_initialized()) {
+					inst->initialize();
+				}
+
+				// TODO
+
 			} catch(...) {
 				result = NES_TEST_FAILURE;
 				goto exit;
